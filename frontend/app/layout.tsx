@@ -3,6 +3,7 @@ import { IBM_Plex_Sans, IBM_Plex_Mono, Roboto } from "next/font/google";
 import { WalletProvider } from "@/lib/wallet";
 import { LearnedDepositsProvider } from "@/lib/learnedDeposits";
 import { Header } from "@/components/Header";
+import { TestnetBanner } from "@/components/TestnetBanner";
 import { SubgraphHealthBanner } from "@/components/SubgraphHealthBanner";
 import "./globals.css";
 
@@ -38,6 +39,7 @@ export default function RootLayout({
         <WalletProvider>
           <LearnedDepositsProvider>
             <Header />
+            <TestnetBanner />
             <SubgraphHealthBanner />
             <main
             id="main-content"

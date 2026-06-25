@@ -1,5 +1,9 @@
 // Runtime configuration, surfaced from the project .env via next.config.ts.
 
+// The official ZEN mainnet chain id. Any other network the app targets is
+// treated as a testnet environment (see TestnetBanner).
+export const MAINNET_CHAIN_ID = 26514;
+
 export const CONFIG = {
   rpc: process.env.NEXT_PUBLIC_RPC ?? "http://localhost:8545",
   chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "31337"),
