@@ -50,7 +50,21 @@ addresses live in `staker/broadcast/DeployZenStakerTestnet.s.sol/31337/run-lates
 
 Config (`frontend/.env.template`), points at the devnet — values the browser needs are
 mirrored to `NEXT_PUBLIC_*` via `next.config.ts` (wallet/contract calls run
-client-side). Copy the file to frontend/.env before first run.
+client-side). Copy the file to frontend/.env before first run. 
+
+# Deployment
+
+The frontend is a fully client-side dApp, built as a **static export**
+(`output: "export"` in `next.config.ts`) → `next build` emits a static `out/`
+folder, deployed as static assets on **Cloudflare Pages** (no server / edge
+runtime). `next dev` ignores the export setting, so local devnet runs are
+unaffected; `next start` is not used (run `npm run serve` to preview the static
+build locally). Server-side `redirect()` is unavailable in export, so `/stake`
+and `/deposits` redirect client-side (`/stake` also via `public/_redirects` at
+the CDN edge). Env vars are inlined at build time, so they must be set in the
+Cloudflare build environment and must point at **public HTTPS** endpoints (a
+deployed HTTPS site cannot reach `http://localhost`). See the README for the
+full Cloudflare setup.
 
 # Design choices
 

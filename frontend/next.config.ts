@@ -5,6 +5,12 @@ import type { NextConfig } from "next";
 // here instead of renaming the .env. Next.js loads .env into process.env before
 // evaluating this config.
 const nextConfig: NextConfig = {
+  // Static export: the app is a fully client-side dApp (chain via ethers,
+  // subgraph via GraphQL, writes signed by the wallet), so `next build`
+  // produces a static `out/` folder deployable to any static host (Cloudflare
+  // Pages). `next dev` ignores this, so local devnet runs are unaffected.
+  output: "export",
+  images: { unoptimized: true },
   env: {
     NEXT_PUBLIC_RPC: process.env.RPC,
     NEXT_PUBLIC_CHAIN_ID: process.env.CHAIN_ID,
