@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import { useWallet } from "@/lib/wallet";
 import { useGlobalState, useUserSummary, useLiveReward } from "@/lib/useDashboard";
 import { useDeposits } from "@/lib/useDeposits";
-import { useDepositActions } from "@/lib/useDepositActions";
+import { useDepositActions, actionStepLabel } from "@/lib/useDepositActions";
 import {
   dailyRate,
   estimateApr,
@@ -18,12 +18,6 @@ import { useTokenSymbol } from "@/lib/tokenSymbol";
 import { StatCard } from "./StatCard";
 import { ActionModal } from "./ActionModal";
 import { StakeDialog } from "./StakeDialog";
-
-const PHASE_LABEL: Record<string, string> = {
-  approving: "Confirm the approval…",
-  claiming: "Claiming rewards…",
-  pending: "Awaiting confirmation…",
-};
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -95,7 +89,7 @@ export function Dashboard() {
   }, [reloadUser, reloadDeposits]);
 
   const claimingNow = actions.busy && actions.state.kind === "claim";
-  const phaseLabel = actions.state.phase ? PHASE_LABEL[actions.state.phase] : null;
+  const stepLabel = actionStepLabel(actions.state);
 
   const onClaim = useCallback(async () => {
     if (!position) return;
@@ -144,6 +138,13 @@ export function Dashboard() {
             {actions.state.error && !dialog && (
               <div className="hl-alert hl-alert-error" style={{ marginBottom: "var(--hl-space-5)" }}>
                 {actions.state.error}
+              </div>
+            )}
+
+            {/* Progress for the inline claim (the withdraw dialog shows its own). */}
+            {actions.busy && !dialog && stepLabel && (
+              <div className="hl-alert hl-alert-warning" style={{ marginBottom: "var(--hl-space-5)" }}>
+                {stepLabel}…
               </div>
             )}
 
@@ -230,7 +231,7 @@ export function Dashboard() {
           unclaimed={position.unclaimedRewards}
           symbol={symbol}
           busy={actions.busy}
-          phaseLabel={phaseLabel}
+          phaseLabel={stepLabel}
           error={actions.state.error}
           onClose={() => {
             if (!actions.busy) {

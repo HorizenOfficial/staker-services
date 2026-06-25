@@ -5,18 +5,12 @@ import { useCallback, useEffect, useState } from "react";
 import { formatUnits } from "ethers";
 import { useWallet } from "@/lib/wallet";
 import { useDeposits, type DepositDetail } from "@/lib/useDeposits";
-import { useDepositActions } from "@/lib/useDepositActions";
+import { useDepositActions, actionStepLabel } from "@/lib/useDepositActions";
 import { getReadContracts } from "@/lib/contracts";
 import { CONFIG } from "@/lib/config";
 import { formatToken } from "@/lib/format";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
 import { ActionModal } from "./ActionModal";
-
-const PHASE_LABEL: Record<string, string> = {
-  approving: "Confirm the approval…",
-  claiming: "Claiming rewards…",
-  pending: "Awaiting confirmation…",
-};
 
 export function DepositsTable() {
   const { address, isCorrectChain } = useWallet();
@@ -50,7 +44,7 @@ export function DepositsTable() {
   const totalUnclaimed = deposits.reduce((a, d) => a + d.unclaimedRewards, 0n);
   const hasClaimable = totalUnclaimed > 0n;
 
-  const phaseLabel = actions.state.phase ? PHASE_LABEL[actions.state.phase] : null;
+  const stepLabel = actionStepLabel(actions.state);
 
   // Single-position mode: present one aggregated position when the user has at
   // most one deposit. >1 deposits (legacy / created elsewhere) falls back to the table.
@@ -100,6 +94,13 @@ export function DepositsTable() {
       {actions.state.error && !modal && (
         <div className="hl-alert hl-alert-error" style={{ marginBottom: "var(--hl-space-5)" }}>
           {actions.state.error}
+        </div>
+      )}
+
+      {/* Progress for inline claim / claim-all (modals show their own). */}
+      {actions.busy && !modal && stepLabel && (
+        <div className="hl-alert hl-alert-warning" style={{ marginBottom: "var(--hl-space-5)" }}>
+          {stepLabel}…
         </div>
       )}
 
@@ -185,7 +186,7 @@ export function DepositsTable() {
           unclaimed={modal.deposit.unclaimedRewards}
           symbol={symbol}
           busy={actions.busy}
-          phaseLabel={phaseLabel}
+          phaseLabel={stepLabel}
           error={actions.state.error}
           onClose={() => {
             if (!actions.busy) {

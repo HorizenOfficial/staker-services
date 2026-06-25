@@ -138,7 +138,7 @@ export function ActionModal({
 
           {busy && phaseLabel && (
             <div className="hl-alert hl-alert-warning" style={{ marginTop: "var(--hl-space-5)" }}>
-              {phaseLabel}
+              {phaseLabel}…
             </div>
           )}
           {error && (

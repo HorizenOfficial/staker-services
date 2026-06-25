@@ -11,16 +11,33 @@ import { CONFIG } from "@/lib/config";
 import { formatToken } from "@/lib/format";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
 
-const STATUS_LABEL: Record<string, string> = {
-  approving: "Confirm the approval…",
-  staking: "Confirming transaction…",
-};
+// Maps each in-progress phase to its step number + label. The stake steps shift
+// from 3/4 & 4/4 (approval required) down to 1/2 & 2/2 when the allowance
+// already covers the amount, so the count always matches `totalSteps`.
+function stepInfo(
+  status: string,
+  totalSteps: number
+): { n: number; label: string } | null {
+  const withApproval = totalSteps === 4;
+  switch (status) {
+    case "approve-wallet":
+      return { n: 1, label: "Approve token spending in your wallet" };
+    case "approve-pending":
+      return { n: 2, label: "Waiting for the approval to confirm" };
+    case "stake-wallet":
+      return { n: withApproval ? 3 : 1, label: "Confirm the stake in your wallet" };
+    case "stake-pending":
+      return { n: withApproval ? 4 : 2, label: "Waiting for the stake to confirm" };
+    default:
+      return null;
+  }
+}
 
 // The stake form, chrome-free so it can live inside a dialog. Handles
 // create-or-increase (single-position); staking always uses approve + stake.
 export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onCancel?: () => void }) {
   const { address, isCorrectChain } = useWallet();
-  const { status, error, depositId, stake, reset } = useStake();
+  const { status, error, depositId, totalSteps, stake, reset } = useStake();
   const { add: learnDeposit } = useLearnedDeposits();
 
   const active = address && isCorrectChain ? address : null;
@@ -53,7 +70,8 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
     }
   }, [status, depositId, address, learnDeposit, onSuccess]);
 
-  const busy = status === "approving" || status === "staking";
+  const step = stepInfo(status, totalSteps);
+  const busy = step !== null;
 
   let amountError: string | null = null;
   if (amount) {
@@ -114,9 +132,9 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
         </button>
       </div>
 
-      {busy && (
+      {step && (
         <div className="hl-alert hl-alert-warning" style={{ marginTop: "var(--hl-space-5)" }}>
-          {STATUS_LABEL[status]}
+          Step {step.n}/{totalSteps}: {step.label}…
         </div>
       )}
       {status === "error" && error && (
