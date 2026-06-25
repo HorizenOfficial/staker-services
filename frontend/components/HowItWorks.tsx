@@ -203,13 +203,13 @@ export function HowItWorks() {
         <div>
           <RefRow
             label="Staking contract"
-            value={(CONFIG.zenStaker)}
-            href={addressUrl(CONFIG.zenStaker)}
+            value={(CONFIG.contractStaker)}
+            href={addressUrl(CONFIG.contractStaker)}
           />
           <RefRow
             label={`${symbol} token`}
-            value={(CONFIG.zenToken)}
-            href={tokenUrl(CONFIG.zenToken)}
+            value={(CONFIG.contractToken)}
+            href={tokenUrl(CONFIG.contractToken)}
           />
           <RefRow
             label="Network"

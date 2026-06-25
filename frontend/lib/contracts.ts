@@ -15,8 +15,8 @@ export function getReadProvider(): JsonRpcProvider {
 export function getReadContracts() {
   const provider = getReadProvider();
   return {
-    staker: new Contract(CONFIG.zenStaker, ZEN_STAKER_ABI, provider),
-    token: new Contract(CONFIG.zenToken, ZEN_TOKEN_ABI, provider),
+    staker: new Contract(CONFIG.contractStaker, ZEN_STAKER_ABI, provider),
+    token: new Contract(CONFIG.contractToken, ZEN_TOKEN_ABI, provider),
   };
 }
 
@@ -38,7 +38,7 @@ export async function connectWallet(): Promise<JsonRpcSigner> {
 
 export function getSignedContracts(signer: JsonRpcSigner) {
   return {
-    staker: new Contract(CONFIG.zenStaker, ZEN_STAKER_ABI, signer),
-    token: new Contract(CONFIG.zenToken, ZEN_TOKEN_ABI, signer),
+    staker: new Contract(CONFIG.contractStaker, ZEN_STAKER_ABI, signer),
+    token: new Contract(CONFIG.contractToken, ZEN_TOKEN_ABI, signer),
   };
 }

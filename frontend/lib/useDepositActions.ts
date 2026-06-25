@@ -113,7 +113,7 @@ export function useDepositActions() {
         const { staker, token } = require();
         const amount = parseEther(amountStr);
 
-        const allowance: bigint = await token.allowance(address!, CONFIG.zenStaker);
+        const allowance: bigint = await token.allowance(address!, CONFIG.contractStaker);
         const needsApproval = allowance < amount;
         const total = needsApproval ? 4 : 2;
         const at = (n: number, label: string): ActionState => ({
@@ -125,7 +125,7 @@ export function useDepositActions() {
 
         if (needsApproval) {
           setState(at(1, "Approve token spending in your wallet"));
-          const approveTx = await token.approve(CONFIG.zenStaker, amount);
+          const approveTx = await token.approve(CONFIG.contractStaker, amount);
           setState(at(2, "Waiting for the approval to confirm"));
           await approveTx.wait();
         }

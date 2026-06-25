@@ -80,12 +80,12 @@ export function useStake(): StakeResult {
 
         // approve-if-needed: the ZEN token is a LayerZero OFT without EIP-2612
         // permit, so staking always goes through a standard ERC-20 approval.
-        const allowance: bigint = await token.allowance(address, CONFIG.zenStaker);
+        const allowance: bigint = await token.allowance(address, CONFIG.contractStaker);
         const needsApproval = allowance < amount;
         setTotalSteps(needsApproval ? 4 : 2);
         if (needsApproval) {
           setStatus("approve-wallet");
-          const approveTx = await token.approve(CONFIG.zenStaker, amount);
+          const approveTx = await token.approve(CONFIG.contractStaker, amount);
           setStatus("approve-pending");
           await approveTx.wait();
         }
