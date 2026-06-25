@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchUserActivity, type ActivityItem } from "./subgraph";
+import { usePolling } from "./usePolling";
 
 const POLL_MS = 20_000;
 const PAGE = 25;
@@ -77,16 +78,15 @@ export function useActivity(address: string | null): ActivityState {
     }
   }, [address, items, apply]);
 
+  // Reset accumulated state when the address changes (runs before the poll
+  // below re-loads, so a stale address's rows never flash for the new one).
   useEffect(() => {
-    // Reset accumulated state when the address changes, then load + poll.
     byKey.current = new Map();
     setItems([]);
     setCanLoadMore(false);
-    loadLatest();
-    if (!address) return;
-    const id = setInterval(loadLatest, POLL_MS);
-    return () => clearInterval(id);
-  }, [address, loadLatest]);
+  }, [address]);
+
+  usePolling(loadLatest, POLL_MS, !!address);
 
   return { items, loading, error, canLoadMore, loadMore, reload: loadLatest };
 }

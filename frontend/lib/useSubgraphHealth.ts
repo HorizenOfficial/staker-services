@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { getReadProvider } from "./contracts";
 import { fetchSubgraphMeta } from "./subgraph";
+import { usePolling } from "./usePolling";
 
 const POLL_MS = 20_000;
 // Normal graph-node lag on a 2s-block devnet is a couple of blocks; flag only
@@ -54,11 +55,7 @@ export function useSubgraphHealth(): SubgraphHealth {
     }
   }, []);
 
-  useEffect(() => {
-    check();
-    const id = setInterval(check, POLL_MS);
-    return () => clearInterval(id);
-  }, [check]);
+  usePolling(check, POLL_MS);
 
   return health;
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { getReadContracts } from "./contracts";
 import { fetchUserDepositIds } from "./subgraph";
 import { useLearnedDeposits } from "./learnedDeposits";
+import { usePolling } from "./usePolling";
 
 const POLL_MS = 20_000;
 
@@ -94,12 +95,7 @@ export function useDeposits(address: string | null): DepositsState {
     }
   }, [address, learnedIds]);
 
-  useEffect(() => {
-    load();
-    if (!address) return;
-    const id = setInterval(load, POLL_MS);
-    return () => clearInterval(id);
-  }, [load, address]);
+  usePolling(load, POLL_MS, !!address);
 
   return { deposits, loading, error, subgraphDown, reload: load };
 }

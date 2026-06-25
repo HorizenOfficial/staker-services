@@ -25,7 +25,7 @@ export function TestnetBanner() {
         borderBottom: "2px solid var(--hl-yellow)",
       }}
     >
-      You are in testnet environment
+      You are in testnet environment!
     </div>
   );
 }

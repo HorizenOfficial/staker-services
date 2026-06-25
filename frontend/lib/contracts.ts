@@ -3,21 +3,38 @@ import {
   Contract,
   JsonRpcProvider,
   JsonRpcSigner,
+  Network,
 } from "ethers";
 import { CONFIG } from "./config";
 import { ZEN_STAKER_ABI, ZEN_TOKEN_ABI } from "./abi";
 
+// Singleton read provider + contracts. The chain id is fixed, so we pin a static
+// network: this skips ethers' per-provider eth_chainId auto-detection, and
+// reusing one instance across all polling hooks avoids re-instantiating (and
+// re-detecting) the provider on every read.
+let readProvider: JsonRpcProvider | null = null;
+let readContracts: { staker: Contract; token: Contract } | null = null;
+
 // Read-only provider for view calls (no wallet required).
 export function getReadProvider(): JsonRpcProvider {
-  return new JsonRpcProvider(CONFIG.rpc);
+  if (!readProvider) {
+    const network = Network.from(CONFIG.chainId);
+    readProvider = new JsonRpcProvider(CONFIG.rpc, network, {
+      staticNetwork: network,
+    });
+  }
+  return readProvider;
 }
 
 export function getReadContracts() {
-  const provider = getReadProvider();
-  return {
-    staker: new Contract(CONFIG.contractStaker, ZEN_STAKER_ABI, provider),
-    token: new Contract(CONFIG.contractToken, ZEN_TOKEN_ABI, provider),
-  };
+  if (!readContracts) {
+    const provider = getReadProvider();
+    readContracts = {
+      staker: new Contract(CONFIG.contractStaker, ZEN_STAKER_ABI, provider),
+      token: new Contract(CONFIG.contractToken, ZEN_TOKEN_ABI, provider),
+    };
+  }
+  return readContracts;
 }
 
 declare global {

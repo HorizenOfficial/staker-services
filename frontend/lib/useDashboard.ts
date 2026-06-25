@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getReadContracts } from "./contracts";
 import { fetchUserDepositIds } from "./subgraph";
+import { usePolling } from "./usePolling";
 
 const POLL_MS = 20_000;
 
@@ -33,11 +34,7 @@ export function useGlobalState() {
     }
   }, []);
 
-  useEffect(() => {
-    load();
-    const id = setInterval(load, POLL_MS);
-    return () => clearInterval(id);
-  }, [load]);
+  usePolling(load, POLL_MS);
 
   return { data, error, reload: load };
 }
@@ -93,12 +90,7 @@ export function useUserSummary(address: string | null) {
     }
   }, [address]);
 
-  useEffect(() => {
-    load();
-    if (!address) return;
-    const id = setInterval(load, POLL_MS);
-    return () => clearInterval(id);
-  }, [load, address]);
+  usePolling(load, POLL_MS, !!address);
 
   return { data, loading, reload: load };
 }
