@@ -59,7 +59,7 @@ previews. The "testnet environment" banner shows automatically whenever
 | `SUBGRAPH` | Public subgraph GraphQL endpoint | `https://…/subgraphs/name/zen-staker` |
 | `EXPLORER_URL` | Block-explorer base URL (for tx/address links) | `https://explorer.example.com` |
 | `SINGLE_POSITION` | Single aggregated position UX (`true`/`false`) | `true` |
-| `NODE_VERSION` | Build Node version (Next 16 needs ≥ 20) | `20` |
+| `NODE_VERSION` | Build Node version (Next 16 needs ≥ 20) | `24` |
 
 > ⚠️ `RPC` and `SUBGRAPH` must be **public HTTPS** URLs reachable from the
 > browser. A site served over HTTPS cannot call `http://localhost` (mixed
