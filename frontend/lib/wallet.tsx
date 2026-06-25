@@ -11,6 +11,7 @@ import {
 import { BrowserProvider, JsonRpcSigner } from "ethers";
 import { connectWallet } from "./contracts";
 import { CONFIG } from "./config";
+import { fetchTokenSymbol } from "./tokenSymbol";
 
 interface WalletState {
   address: string | null;
@@ -92,6 +93,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to switch network.");
     }
+  }, []);
+
+  // Single startup RPC for the token symbol; cached for the process lifetime.
+  useEffect(() => {
+    fetchTokenSymbol();
   }, []);
 
   useEffect(() => {

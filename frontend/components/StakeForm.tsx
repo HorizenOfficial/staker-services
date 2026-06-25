@@ -9,6 +9,7 @@ import { useLearnedDeposits } from "@/lib/learnedDeposits";
 import { getReadContracts } from "@/lib/contracts";
 import { CONFIG } from "@/lib/config";
 import { formatToken } from "@/lib/format";
+import { useTokenSymbol } from "@/lib/tokenSymbol";
 
 const STATUS_LABEL: Record<string, string> = {
   approving: "Confirm the approval…",
@@ -29,15 +30,13 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
 
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState<bigint | null>(null);
-  const [symbol, setSymbol] = useState("ZEN");
+  const symbol = useTokenSymbol();
 
   const loadBalance = useCallback(async () => {
     if (!address) return;
     try {
       const { token } = getReadContracts();
-      const [bal, sym] = await Promise.all([token.balanceOf(address), token.symbol()]);
-      setBalance(bal as bigint);
-      setSymbol(sym as string);
+      setBalance((await token.balanceOf(address)) as bigint);
     } catch {
       /* ignore */
     }

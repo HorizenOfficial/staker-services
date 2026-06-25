@@ -5,6 +5,7 @@ import { useActivity } from "@/lib/useActivity";
 import { type ActivityType } from "@/lib/subgraph";
 import { formatToken } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
+import { useTokenSymbol } from "@/lib/tokenSymbol";
 
 function txUrl(hash: string): string | null {
   return CONFIG.explorerUrl ? `${CONFIG.explorerUrl.replace(/\/+$/, "")}/tx/${hash}` : null;
@@ -58,6 +59,7 @@ export function HistoryTable() {
   const { address, isCorrectChain } = useWallet();
   const active = address && isCorrectChain ? address : null;
   const { items, loading, error, canLoadMore, loadMore } = useActivity(active);
+  const symbol = useTokenSymbol();
 
   return (
     <div style={{ maxWidth: 880, width: "100%" }}>
@@ -99,7 +101,7 @@ export function HistoryTable() {
                   <tr key={`${it.txHash}-${it.type}-${it.depositId}`} style={{ borderTop: "1px solid var(--hl-grey)" }}>
                     <td style={td}><TypeBadge type={it.type} /></td>
                     <td className="hl-mono" style={{ ...td, textAlign: "right" }}>
-                      {formatToken(it.amount, 6)} ZEN
+                      {formatToken(it.amount, 6)} {symbol}
                     </td>
                     <td style={{ ...td, color: "var(--hl-grey-text)" }}>
                       {new Date(it.timestamp * 1000).toLocaleString()}

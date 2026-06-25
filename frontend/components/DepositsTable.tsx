@@ -9,6 +9,7 @@ import { useDepositActions } from "@/lib/useDepositActions";
 import { getReadContracts } from "@/lib/contracts";
 import { CONFIG } from "@/lib/config";
 import { formatToken } from "@/lib/format";
+import { useTokenSymbol } from "@/lib/tokenSymbol";
 import { ActionModal } from "./ActionModal";
 
 const PHASE_LABEL: Record<string, string> = {
@@ -24,16 +25,14 @@ export function DepositsTable() {
   const actions = useDepositActions();
 
   const [walletBalance, setWalletBalance] = useState<bigint>(0n);
-  const [symbol, setSymbol] = useState("ZEN");
+  const symbol = useTokenSymbol();
   const [modal, setModal] = useState<{ mode: "stakeMore" | "withdraw"; deposit: DepositDetail } | null>(null);
 
   const loadWallet = useCallback(async () => {
     if (!active) return;
     try {
       const { token } = getReadContracts();
-      const [bal, sym] = await Promise.all([token.balanceOf(active), token.symbol()]);
-      setWalletBalance(bal as bigint);
-      setSymbol(sym as string);
+      setWalletBalance((await token.balanceOf(active)) as bigint);
     } catch {
       /* ignore */
     }
@@ -109,7 +108,7 @@ export function DepositsTable() {
       ) : deposits.length === 0 && !subgraphDown ? (
         <Empty>
           <p style={{ marginBottom: "var(--hl-space-6)" }}>You have no active deposits yet.</p>
-          <Link href="/stake" className="hl-btn hl-btn-primary">Stake ZEN</Link>
+          <Link href="/stake" className="hl-btn hl-btn-primary">Stake {symbol}</Link>
         </Empty>
       ) : singleView && deposits.length === 1 ? (
         <PositionCard

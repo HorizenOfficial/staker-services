@@ -2,6 +2,7 @@
 
 import { CONFIG } from "@/lib/config";
 import { addressUrl, tokenUrl, truncateAddress } from "@/lib/format";
+import { useTokenSymbol } from "@/lib/tokenSymbol";
 
 const CONTRACTS_SOURCE_URL = "https://github.com/HorizenLabs/staker";
 
@@ -108,6 +109,7 @@ function RefRow({
 }
 
 export function HowItWorks() {
+  const symbol = useTokenSymbol();
   return (
     <div style={{ maxWidth: 880, width: "100%" }}>
       <h1 style={{ fontSize: 45, marginBottom: "var(--hl-space-2)" }}>How it works</h1>
@@ -118,7 +120,7 @@ export function HowItWorks() {
       <div className="hl-card">
         <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
           Zen Staking is the official staking program for the Horizen chain. <br/>
-          <b>Fully on-chain and non-custodial.</b> Your ZEN is locked only
+          <b>Fully on-chain and non-custodial.</b> Your {symbol} is locked only
           inside the public staking contract - no intermediary ever takes custody -
           and every balance, reward and transaction is verifiable on the block explorer.
         </p>
@@ -145,7 +147,7 @@ export function HowItWorks() {
           </Point>
           <Point title="Non-custodial">
             Funds stay in your control at all times. You interact with the contract
-            directly from your own wallet — there is no backend that can move your ZEN.
+            directly from your own wallet — there is no backend that can move your {symbol}.
           </Point>
           <Point title="No lock-up">
             Stake, claim and withdraw whenever you want. Your principal is never
@@ -167,7 +169,7 @@ export function HowItWorks() {
         >
           <Step n={1} title="The Foundation funds the contract">
             The Horizen Foundation periodically tops up the staking contract by
-            sending ZEN through the on-chain reward-notification method
+            sending {symbol} through the on-chain reward-notification method
             (<span className="hl-mono">notifyRewardAmount</span>). Every top-up is a
             public transaction, verifiable on the block explorer.
           </Step>
@@ -175,11 +177,11 @@ export function HowItWorks() {
             Rewards are not paid out all at once. Each top-up is distributed at a
             constant rate over a fixed time window set on-chain. The current rate and
             the window&apos;s end are shown on the dashboard as{" "}
-            <strong>Reward Rate</strong> (ZEN / day) and <strong>Distribution Ends</strong>.
+            <strong>Reward Rate</strong> ({symbol} / day) and <strong>Distribution Ends</strong>.
           </Step>
           <Step n={3} title="You accrue continuously, pro-rata">
             While the window is active, rewards accrue every block in proportion to
-            your share of the total staked ZEN. Nothing needs to be done for them to
+            your share of the total staked {symbol}. Nothing needs to be done for them to
             grow — your balance updates automatically.
           </Step>
           <Step n={4} title="New funding rolls into the schedule">
@@ -205,7 +207,7 @@ export function HowItWorks() {
             href={addressUrl(CONFIG.zenStaker)}
           />
           <RefRow
-            label="ZEN token"
+            label={`${symbol} token`}
             value={(CONFIG.zenToken)}
             href={tokenUrl(CONFIG.zenToken)}
           />

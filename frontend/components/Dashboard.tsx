@@ -14,6 +14,7 @@ import {
   formatToken,
 } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
+import { useTokenSymbol } from "@/lib/tokenSymbol";
 import { StatCard } from "./StatCard";
 import { ActionModal } from "./ActionModal";
 import { StakeDialog } from "./StakeDialog";
@@ -68,6 +69,7 @@ const actionBtn: React.CSSProperties = { width: 140 };
 export function Dashboard() {
   const { address, isCorrectChain } = useWallet();
   const active = address && isCorrectChain ? address : null;
+  const symbol = useTokenSymbol();
 
   const { data: global, error: globalError } = useGlobalState();
   const { data: user, reload: reloadUser } = useUserSummary(active);
@@ -105,7 +107,7 @@ export function Dashboard() {
     <div style={{ maxWidth: 980, width: "100%" }}>
       <h1 style={{ fontSize: 45, marginBottom: "var(--hl-space-2)" }}>Zen Staking Dashboard</h1>
       <p style={{ color: "var(--hl-grey-text)", margin: "0 0 var(--hl-space-10)" }}>
-        Stake ZEN to earn ZEN rewards. No lock-up - claim or withdraw any time.
+        Stake {symbol} to earn {symbol} rewards. No lock-up - claim or withdraw any time.
       </p>
 
       {/* Protocol stats */}
@@ -114,8 +116,8 @@ export function Dashboard() {
         <div className="hl-alert hl-alert-error">{globalError}</div>
       ) : (
         <div style={grid}>
-          <StatCard label="Total ZEN Staked" value={global ? formatToken(global.totalStaked) : "…"} unit="ZEN" highlight />
-          <StatCard label="Reward Rate" value={global ? formatToken(dailyRate(global.rewardRate)) : "…"} unit="ZEN / day" />
+          <StatCard label={`Total ${symbol} Staked`} value={global ? formatToken(global.totalStaked) : "…"} unit={symbol} highlight />
+          <StatCard label="Reward Rate" value={global ? formatToken(dailyRate(global.rewardRate)) : "…"} unit={`${symbol} / day`} />
           <StatCard label="Est. APR" value={global ? formatPct(estimateApr(global.rewardRate, global.totalStaked)) : "…"} hint="Based on the current rate" />
           <StatCard label="Distribution Ends" value={global ? <EndTime rewardEndTime={global.rewardEndTime} /> : "…"} />
         </div>
@@ -147,9 +149,9 @@ export function Dashboard() {
 
             <div style={grid}>
               <StatCard
-                label="My Staked ZEN"
+                label={`My Staked ${symbol}`}
                 value={user ? formatToken(user.totalStaked) : "…"}
-                unit="ZEN"
+                unit={symbol}
                 footer={
                   CONFIG.singlePosition ? (
                     <div style={btnRow}>
@@ -178,7 +180,7 @@ export function Dashboard() {
               <StatCard
                 label="Unclaimed Rewards"
                 value={liveUnclaimed !== null ? formatToken(liveUnclaimed, 6) : user ? "—" : "…"}
-                unit="ZEN"
+                unit={symbol}
                 hint={user?.totalUnclaimed === null ? "Subgraph unavailable" : "Updates live"}
                 footer={
                   CONFIG.singlePosition ? (
@@ -226,7 +228,7 @@ export function Dashboard() {
           max={position.balance}
           maxLabel="Staked"
           unclaimed={position.unclaimedRewards}
-          symbol="ZEN"
+          symbol={symbol}
           busy={actions.busy}
           phaseLabel={phaseLabel}
           error={actions.state.error}
