@@ -7,17 +7,55 @@ import { useGlobalState, useUserSummary, useLiveReward } from "@/lib/useDashboar
 import { useDeposits } from "@/lib/useDeposits";
 import { useDepositActions, actionStepLabel } from "@/lib/useDepositActions";
 import {
+  addressUrl,
   dailyRate,
   estimateApr,
   formatEndTimeParts,
   formatPct,
   formatToken,
+  tokenUrl,
 } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
 import { StatCard } from "./StatCard";
 import { ActionModal } from "./ActionModal";
 import { StakeDialog } from "./StakeDialog";
+
+// The token symbol, linked to its block-explorer token page. Falls back to
+// plain text when no explorer is configured.
+function TokenSymbolLink({ symbol }: { symbol: string }) {
+  const href = tokenUrl(CONFIG.contractToken);
+  if (!href) return <>{symbol}</>;
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ color: "var(--hl-navy)", textDecoration: "underline" }}
+    >
+      {symbol}
+    </a>
+  );
+}
+
+// An address rendered in the shared navy style, linked to its block-explorer
+// page. Falls back to plain text when no explorer is configured.
+function ExplorerAddress({ address }: { address: string }) {
+  const href = addressUrl(address);
+  const style: React.CSSProperties = {
+    color: "var(--hl-navy)",
+    wordBreak: "break-all",
+    textDecoration: href ? "underline" : "none",
+  };
+  if (!href) {
+    return <span className="hl-address" style={style}>{address}</span>;
+  }
+  return (
+    <a className="hl-address" href={href} target="_blank" rel="noopener noreferrer" style={style}>
+      {address}
+    </a>
+  );
+}
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -101,11 +139,15 @@ export function Dashboard() {
     <div style={{ maxWidth: 980, width: "100%" }}>
       <h1 style={{ fontSize: 45, marginBottom: "var(--hl-space-2)" }}>Zen Staking Dashboard</h1>
       <p style={{ color: "var(--hl-grey-text)", margin: "0 0 var(--hl-space-10)" }}>
-        Stake {symbol} to earn {symbol} rewards. No lock-up - claim or withdraw any time.
+        Stake <TokenSymbolLink symbol={symbol} /> to earn {symbol} rewards. No lock-up - claim or withdraw any time.
       </p>
 
       {/* Protocol stats */}
       <SectionLabel>Protocol</SectionLabel>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "var(--hl-space-3)", marginBottom: "var(--hl-space-6)" }}>
+        <span className="hl-label">Staking contract address: </span>
+        <ExplorerAddress address={CONFIG.contractStaker} />
+      </div>
       {globalError ? (
         <div className="hl-alert hl-alert-error">{globalError}</div>
       ) : (
@@ -132,7 +174,7 @@ export function Dashboard() {
           <>
             <div style={{ display: "flex", alignItems: "baseline", gap: "var(--hl-space-3)", marginBottom: "var(--hl-space-6)" }}>
               <span className="hl-label">Wallet address: </span>
-              <span className="hl-address" style={{ color: "var(--hl-navy)", wordBreak: "break-all" }}>{address}</span>
+              <ExplorerAddress address={address} />
             </div>
 
             {actions.state.error && !dialog && (
