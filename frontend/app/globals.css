@@ -282,6 +282,21 @@ h3 {
   }
 }
 
+/* ---- Contract/network reference rows (How it works) ----
+   Full addresses are too wide for a phone and are set nowrap, so they overflow.
+   Below the breakpoint, stack the value under its label and let it wrap. */
+@media (max-width: 640px) {
+  .hl-ref-row {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: var(--hl-space-2) !important;
+  }
+  .hl-ref-value {
+    white-space: normal !important;
+    word-break: break-all;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0.01ms !important;

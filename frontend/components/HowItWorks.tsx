@@ -79,6 +79,7 @@ function RefRow({
 }) {
   return (
     <div
+      className="hl-ref-row"
       style={{
         display: "flex",
         justifyContent: "space-between",
@@ -94,13 +95,13 @@ function RefRow({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="hl-address"
+          className="hl-address hl-ref-value"
           style={{ color: "var(--hl-navy)", textDecoration: "underline", whiteSpace: "nowrap" }}
         >
           {value} ↗
         </a>
       ) : (
-        <span className="hl-address" style={{ color: "var(--hl-navy)", whiteSpace: "nowrap" }}>
+        <span className="hl-address hl-ref-value" style={{ color: "var(--hl-navy)", whiteSpace: "nowrap" }}>
           {value}
         </span>
       )}
