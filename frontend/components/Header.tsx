@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useWallet } from "@/lib/wallet";
@@ -17,22 +18,34 @@ const NAV = [
   { href: "/how-it-works", label: "How it works" },
 ];
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({
+  href,
+  label,
+  block = false,
+  onNavigate,
+}: {
+  href: string;
+  label: string;
+  block?: boolean;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
   const active = pathname === href;
   return (
     <Link
       href={href}
       className="hl-mono"
+      onClick={onNavigate}
       style={{
         fontWeight: 600,
-        fontSize: 12,
+        fontSize: block ? 14 : 12,
         letterSpacing: 1.2,
         textTransform: "uppercase",
         textDecoration: "none",
         color: active ? "var(--hl-navy)" : "var(--hl-grey-text)",
         borderBottom: active ? "2px solid var(--hl-yellow)" : "2px solid transparent",
         paddingBottom: 4,
+        display: block ? "block" : undefined,
       }}
     >
       {label}
@@ -40,12 +53,43 @@ function NavLink({ href, label }: { href: string; label: string }) {
   );
 }
 
-export function Header() {
+function WalletControls() {
   const { address, connect, disconnect, connecting, isCorrectChain } = useWallet();
+
+  if (address) {
+    return (
+      <>
+        {!isCorrectChain && (
+          <span className="hl-address" style={{ color: "var(--hl-error)" }}>
+            Wrong network
+          </span>
+        )}
+        <span className="hl-address">{truncateAddress(address)}</span>
+        <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={disconnect}>
+          Disconnect
+        </button>
+      </>
+    );
+  }
+  return (
+    <button
+      className="hl-btn hl-btn-primary hl-btn-sm"
+      onClick={connect}
+      disabled={connecting}
+    >
+      {connecting ? "Connecting…" : "Connect Wallet"}
+    </button>
+  );
+}
+
+export function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header
       style={{
+        position: "relative",
         height: 80,
         display: "flex",
         alignItems: "center",
@@ -59,6 +103,7 @@ export function Header() {
         <Link
           href="/"
           aria-label="Zen Staking — Home"
+          onClick={closeMenu}
           style={{
             height: 80,
             display: "flex",
@@ -70,11 +115,12 @@ export function Header() {
             // flush to the very top-left corner: cancel the header's left padding
             marginLeft: "calc(-1 * clamp(20px, 4vw, 100px))",
             paddingLeft: "clamp(20px, 4vw, 100px)",
+            paddingRight: "var(--hl-space-4)",
           }}
         >
           <Logo />
           <span
-            className="hl-mono"
+            className="hl-mono hl-brand-label"
             style={{
               // lighter yellow so the box stands apart from the logo's yellow
               background: "#F6E07A",
@@ -93,34 +139,68 @@ export function Header() {
             Zen Staking
           </span>
         </Link>
-        <nav style={{ display: "flex", alignItems: "center", gap: "var(--hl-space-10)" }} aria-label="Primary">
+        <nav className="hl-nav-desktop" aria-label="Primary">
           {NAV.map((n) => (
             <NavLink key={n.href} {...n} />
           ))}
         </nav>
       </div>
 
-      {address ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--hl-space-4)" }}>
-          {!isCorrectChain && (
-            <span className="hl-address" style={{ color: "var(--hl-error)" }}>
-              Wrong network
-            </span>
-          )}
-          <span className="hl-address">{truncateAddress(address)}</span>
-          <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={disconnect}>
-            Disconnect
-          </button>
-        </div>
-      ) : (
-        <button
-          className="hl-btn hl-btn-primary hl-btn-sm"
-          onClick={connect}
-          disabled={connecting}
+      <div className="hl-wallet-desktop">
+        <WalletControls />
+      </div>
+
+      {/* Mobile: a single hamburger toggles the dropdown below the bar */}
+      <button
+        className="hl-hamburger"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={menuOpen}
+        aria-controls="mobile-menu"
+        onClick={() => setMenuOpen((o) => !o)}
+      >
+        {menuOpen ? (
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M4 4l12 12M16 4L4 16"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="square"
+            />
+          </svg>
+        ) : (
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M3 5h14M3 10h14M3 15h14"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="square"
+            />
+          </svg>
+        )}
+      </button>
+
+      <div id="mobile-menu" className={`hl-mobile-menu${menuOpen ? " open" : ""}`}>
+        <nav
+          style={{ display: "flex", flexDirection: "column", gap: "var(--hl-space-6)" }}
+          aria-label="Primary"
         >
-          {connecting ? "Connecting…" : "Connect Wallet"}
-        </button>
-      )}
+          {NAV.map((n) => (
+            <NavLink key={n.href} {...n} block onNavigate={closeMenu} />
+          ))}
+        </nav>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: "var(--hl-space-4)",
+            paddingTop: "var(--hl-space-6)",
+            borderTop: "1px solid var(--hl-grey)",
+          }}
+        >
+          <WalletControls />
+        </div>
+      </div>
     </header>
   );
 }

@@ -87,7 +87,7 @@ export function HistoryTable() {
       ) : (
         <>
           <div className="hl-card" style={{ padding: 0, overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+            <table className="hl-history-table" style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
               <thead>
                 <tr>
                   <th className="hl-label" style={th}>Type</th>
@@ -99,14 +99,14 @@ export function HistoryTable() {
               <tbody>
                 {items.map((it) => (
                   <tr key={`${it.txHash}-${it.type}-${it.depositId}`} style={{ borderTop: "1px solid var(--hl-grey)" }}>
-                    <td style={td}><TypeBadge type={it.type} /></td>
-                    <td className="hl-mono" style={{ ...td, textAlign: "right" }}>
+                    <td data-label="Type" style={td}><TypeBadge type={it.type} /></td>
+                    <td data-label="Amount" className="hl-mono" style={{ ...td, textAlign: "right" }}>
                       {formatToken(it.amount, 6)} {symbol}
                     </td>
-                    <td style={{ ...td, color: "var(--hl-grey-text)" }}>
+                    <td data-label="Date" style={{ ...td, color: "var(--hl-grey-text)" }}>
                       {new Date(it.timestamp * 1000).toLocaleString()}
                     </td>
-                    <td style={td}>
+                    <td data-label="Tx" style={td}>
                       {txUrl(it.txHash) ? (
                         <a
                           href={txUrl(it.txHash)!}

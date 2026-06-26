@@ -44,6 +44,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* guard against any element pushing the page wider than the viewport */
+  overflow-x: hidden;
 }
 
 body {
@@ -172,6 +174,112 @@ h3 {
   border-left-color: var(--hl-warning);
   background: rgba(217, 119, 6, 0.08);
   color: var(--hl-warning);
+}
+
+/* ---- Header / responsive nav ----
+   Desktop shows the inline nav + wallet controls; below the mobile breakpoint
+   these collapse into a hamburger-triggered dropdown so the bar never overflows. */
+.hl-nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: var(--hl-space-10);
+}
+.hl-wallet-desktop {
+  display: flex;
+  align-items: center;
+  gap: var(--hl-space-4);
+}
+.hl-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--hl-grey);
+  border-radius: 0;
+  color: var(--hl-navy);
+  cursor: pointer;
+}
+.hl-hamburger:hover {
+  border-color: var(--hl-yellow);
+}
+.hl-mobile-menu {
+  display: none;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  gap: var(--hl-space-6);
+  padding: var(--hl-space-8) clamp(20px, 4vw, 100px);
+  background: var(--hl-white);
+  border-bottom: 1px solid var(--hl-grey);
+  box-shadow: 0 12px 24px rgba(4, 23, 66, 0.08);
+  z-index: 50;
+}
+.hl-mobile-menu.open {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .hl-nav-desktop,
+  .hl-wallet-desktop {
+    display: none;
+  }
+  .hl-hamburger {
+    display: flex;
+  }
+  /* keep the "Zen Staking" wordmark, but drop its fixed 160px width and the
+     wide 30px padding that overflowed the bar on phones */
+  .hl-brand-label {
+    width: auto !important;
+    padding: 0 var(--hl-space-5) !important;
+    font-size: 11px !important;
+  }
+}
+
+/* ---- Responsive tables ----
+   Four columns can't fit a phone width, so below the breakpoint the table
+   collapses into a stacked list: each row becomes a card and each cell shows
+   its column name (from data-label) beside the value. No horizontal scroll. */
+@media (max-width: 640px) {
+  .hl-history-table {
+    min-width: 0 !important;
+  }
+  .hl-history-table thead {
+    display: none;
+  }
+  .hl-history-table,
+  .hl-history-table tbody,
+  .hl-history-table tr,
+  .hl-history-table td {
+    display: block;
+    width: 100%;
+  }
+  .hl-history-table tr {
+    padding: var(--hl-space-3) 0;
+  }
+  .hl-history-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hl-space-5);
+    text-align: right !important;
+    padding: var(--hl-space-2) var(--hl-space-5) !important;
+  }
+  .hl-history-table td::before {
+    content: attr(data-label);
+    flex: none;
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--hl-grey-text);
+    text-align: left;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
