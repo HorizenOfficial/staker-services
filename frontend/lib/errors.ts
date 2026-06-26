@@ -1,5 +1,6 @@
 import { Interface } from "ethers";
 import { ZEN_STAKER_ABI } from "./abi";
+import { CONFIG } from "./config";
 
 const iface = new Interface(ZEN_STAKER_ABI);
 
@@ -12,7 +13,7 @@ export function decodeStakeError(err: unknown): string {
     return "Transaction rejected in wallet.";
   }
   if (e?.message?.includes("insufficient funds")) {
-    return "Not enough ETH to cover gas.";
+    return `Not enough ${CONFIG.nativeCurrency} to cover gas.`;
   }
 
   // Try to decode a custom Solidity error

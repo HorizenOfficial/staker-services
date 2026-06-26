@@ -22,6 +22,7 @@ See [claude.md](claude.md) for further info.
 
 ```bash
 cd frontend
+nvm use
 cp .env.template .env   # points at the local devnet by default
 npm install
 npm run dev             # http://localhost:3000
@@ -38,6 +39,7 @@ served as static assets — no server or edge runtime needed.
 | Setting | Value |
 |---|---|
 | Root directory | `frontend` |
+| Install command | `npm ci` |
 | Build command | `npx next build` |
 | Build output directory | `out` |
 | Framework preset | Next.js (Static HTML Export) — or "None" with the fields above |
@@ -59,7 +61,8 @@ previews. The "testnet environment" banner shows automatically whenever
 | `SUBGRAPH` | Public subgraph GraphQL endpoint | `https://…/subgraphs/name/zen-staker` |
 | `EXPLORER_URL` | Block-explorer base URL (for tx/address links) | `https://explorer.example.com` |
 | `SINGLE_POSITION` | Single aggregated position UX (`true`/`false`) | `true` |
-| `NODE_VERSION` | Build Node version (Next 16 needs ≥ 20) | `24` |
+| `NATIVE_CURRENCY` | Native gas-token symbol (defaults to `ETH`) | `ETH` |
+| `NODE_VERSION` | Build Node version (Next 16 needs ≥ 20) | `24.16.0` |
 
 > ⚠️ `RPC` and `SUBGRAPH` must be **public HTTPS** URLs reachable from the
 > browser. A site served over HTTPS cannot call `http://localhost` (mixed

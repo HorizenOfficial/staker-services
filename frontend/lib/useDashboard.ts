@@ -105,34 +105,25 @@ export function useLiveReward(
   rewardEndTime: bigint
 ): bigint | null {
   const [value, setValue] = useState<bigint | null>(base);
-  // anchor the base sample to a wall-clock moment
-  const [anchor, setAnchor] = useState<number>(() => Date.now());
 
   useEffect(() => {
-    setValue(base);
-    setAnchor(Date.now());
-  }, [base]);
-
-  useEffect(() => {
-    if (base === null || totalEarningPower === 0n || userEarningPower === 0n) return;
-    const perSecond = (rewardRate * userEarningPower) / totalEarningPower;
-    if (perSecond === 0n) return;
-
+    const anchor = Date.now();
     const tick = () => {
+      if (base === null || totalEarningPower === 0n || userEarningPower === 0n) {
+        setValue(base);
+        return;
+      }
+      const perSecond = (rewardRate * userEarningPower) / totalEarningPower;
       const nowSec = Math.floor(Date.now() / 1000);
       const endSec = rewardEndTime === 0n ? nowSec : Number(rewardEndTime);
       const cappedNow = Math.min(nowSec, endSec);
       const elapsed = cappedNow - Math.floor(anchor / 1000);
-      if (elapsed <= 0) {
-        setValue(base);
-        return;
-      }
-      setValue(base + perSecond * BigInt(elapsed));
+      setValue(elapsed <= 0 ? base : base + perSecond * BigInt(elapsed));
     };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [base, anchor, rewardRate, userEarningPower, totalEarningPower, rewardEndTime]);
+  }, [base, rewardRate, userEarningPower, totalEarningPower, rewardEndTime]);
 
   return value;
 }
