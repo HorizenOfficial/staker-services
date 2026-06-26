@@ -99,7 +99,7 @@ const btnRow: React.CSSProperties = { display: "flex", gap: "var(--hl-space-3)",
 const actionBtn: React.CSSProperties = { width: 140 };
 
 export function Dashboard() {
-  const { address, isCorrectChain } = useWallet();
+  const { address, isCorrectChain, switchChain } = useWallet();
   const active = address && isCorrectChain ? address : null;
   const symbol = useTokenSymbol();
 
@@ -109,6 +109,17 @@ export function Dashboard() {
   const actions = useDepositActions();
 
   const [dialog, setDialog] = useState<"stake" | "withdraw" | null>(null);
+
+  // Open a dialog from a clean slate: a prior action's error (e.g. a rejected
+  // claim) lives on the shared action state and would otherwise show in the
+  // freshly-opened dialog before the new action has even started.
+  const openDialog = useCallback(
+    (which: "stake" | "withdraw") => {
+      actions.reset();
+      setDialog(which);
+    },
+    [actions]
+  );
 
   // Single-position: one deposit drives Withdraw/Claim.
   const position = CONFIG.singlePosition ? deposits[0] ?? null : null;
@@ -152,8 +163,8 @@ export function Dashboard() {
         <div className="hl-alert hl-alert-error">{globalError}</div>
       ) : (
         <div style={grid}>
-          <StatCard label={`Total ${symbol} Staked`} value={global ? formatToken(global.totalStaked) : "…"} unit={symbol} highlight />
-          <StatCard label="Reward Rate" value={global ? formatToken(dailyRate(global.rewardRate)) : "…"} unit={`${symbol} / day`} />
+          <StatCard label={`Total ${symbol} Staked`} value={global ? formatToken(global.totalStaked, 6) : "…"} unit={symbol} highlight />
+          <StatCard label="Reward Rate" value={global ? formatToken(dailyRate(global.rewardRate), 6) : "…"} unit={`${symbol} / day`} />
           <StatCard label="Est. APR" value={global ? formatPct(estimateApr(global.rewardRate, global.totalStaked)) : "…"} hint="Based on the current rate" />
           <StatCard label="Distribution Ends" value={global ? <EndTime rewardEndTime={global.rewardEndTime} /> : "…"} />
         </div>
@@ -169,7 +180,12 @@ export function Dashboard() {
             </p>
           </div>
         ) : !isCorrectChain ? (
-          <div className="hl-alert hl-alert-warning">Switch to the correct network to view your position.</div>
+          <div className="hl-alert hl-alert-warning" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--hl-space-5)", flexWrap: "wrap" }}>
+            <span>Switch to the correct network to view your position.</span>
+            <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={switchChain}>
+              Switch network
+            </button>
+          </div>
         ) : (
           <>
             <div style={{ display: "flex", alignItems: "baseline", gap: "var(--hl-space-3)", marginBottom: "var(--hl-space-6)" }}>
@@ -193,18 +209,18 @@ export function Dashboard() {
             <div style={grid}>
               <StatCard
                 label={`My Staked ${symbol}`}
-                value={user ? formatToken(user.totalStaked) : "…"}
+                value={user ? formatToken(user.totalStaked, 8) : "…"}
                 unit={symbol}
                 footer={
                   CONFIG.singlePosition ? (
                     <div style={btnRow}>
-                      <button className="hl-btn hl-btn-primary hl-btn-sm" style={actionBtn} onClick={() => setDialog("stake")} disabled={actions.busy}>
+                      <button className="hl-btn hl-btn-primary hl-btn-sm" style={actionBtn} onClick={() => openDialog("stake")} disabled={actions.busy}>
                         Add Stake
                       </button>
                       <button
                         className="hl-btn hl-btn-primary hl-btn-sm"
                         style={actionBtn}
-                        onClick={() => setDialog("withdraw")}
+                        onClick={() => openDialog("withdraw")}
                         disabled={actions.busy || !position || position.balance === 0n}
                       >
                         Withdraw
@@ -222,7 +238,7 @@ export function Dashboard() {
 
               <StatCard
                 label="Unclaimed Rewards"
-                value={liveUnclaimed !== null ? formatToken(liveUnclaimed, 6) : user ? "—" : "…"}
+                value={liveUnclaimed !== null ? formatToken(liveUnclaimed, 8) : user ? "—" : "…"}
                 unit={symbol}
                 hint={user?.totalUnclaimed === null ? "Subgraph unavailable" : "Updates live"}
                 footer={
@@ -243,7 +259,7 @@ export function Dashboard() {
             {/* Multi-deposit model: management lives on the deposits page. */}
             {!CONFIG.singlePosition && (
               <div style={{ ...btnRow, marginTop: "var(--hl-space-8)" }}>
-                <button className="hl-btn hl-btn-primary" onClick={() => setDialog("stake")}>
+                <button className="hl-btn hl-btn-primary" onClick={() => openDialog("stake")}>
                   Add Stake
                 </button>
                 <Link href="/deposits" className="hl-btn hl-btn-ghost">

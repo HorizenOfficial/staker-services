@@ -56,7 +56,7 @@ function Empty({ children }: { children: React.ReactNode }) {
 }
 
 export function HistoryTable() {
-  const { address, isCorrectChain } = useWallet();
+  const { address, isCorrectChain, switchChain } = useWallet();
   const active = address && isCorrectChain ? address : null;
   const { items, loading, error, canLoadMore, loadMore } = useActivity(active);
   const symbol = useTokenSymbol();
@@ -73,7 +73,12 @@ export function HistoryTable() {
           <p>Connect your wallet to view your history.</p>
         </Empty>
       ) : !isCorrectChain ? (
-        <div className="hl-alert hl-alert-warning">Switch to the correct network to view your history.</div>
+        <div className="hl-alert hl-alert-warning" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--hl-space-5)", flexWrap: "wrap" }}>
+          <span>Switch to the correct network to view your history.</span>
+          <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={switchChain}>
+            Switch network
+          </button>
+        </div>
       ) : error ? (
         <div className="hl-alert hl-alert-error">{error}</div>
       ) : loading && items.length === 0 ? (
@@ -101,7 +106,7 @@ export function HistoryTable() {
                   <tr key={`${it.txHash}-${it.type}-${it.depositId}`} style={{ borderTop: "1px solid var(--hl-grey)" }}>
                     <td data-label="Type" style={td}><TypeBadge type={it.type} /></td>
                     <td data-label="Amount" className="hl-mono" style={{ ...td, textAlign: "right" }}>
-                      {formatToken(it.amount, 6)} {symbol}
+                      {formatToken(it.amount, 8)} {symbol}
                     </td>
                     <td data-label="Date" style={{ ...td, color: "var(--hl-grey-text)" }}>
                       {new Date(it.timestamp * 1000).toLocaleString()}

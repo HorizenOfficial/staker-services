@@ -54,15 +54,19 @@ function NavLink({
 }
 
 function WalletControls() {
-  const { address, connect, disconnect, connecting, isCorrectChain } = useWallet();
+  const { address, connect, disconnect, connecting, isCorrectChain, switchChain } = useWallet();
 
   if (address) {
     return (
       <>
         {!isCorrectChain && (
-          <span className="hl-address" style={{ color: "var(--hl-error)" }}>
-            Wrong network
-          </span>
+          <button
+            className="hl-btn hl-btn-ghost hl-btn-sm"
+            onClick={switchChain}
+            style={{ color: "var(--hl-error)", borderColor: "var(--hl-error)" }}
+          >
+            Wrong network — Switch
+          </button>
         )}
         <span className="hl-address">{truncateAddress(address)}</span>
         <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={disconnect}>

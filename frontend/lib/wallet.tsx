@@ -50,6 +50,48 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     setSigner(s);
   }, []);
 
+  const switchChain = useCallback(async () => {
+    if (!window.ethereum) return;
+    const hexId = "0x" + CONFIG.chainId.toString(16);
+    setError(null);
+    try {
+      await window.ethereum.request?.({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: hexId }],
+      });
+    } catch (e) {
+      // 4902: the wallet doesn't know this chain — add it (which also makes it
+      // current). Other codes (e.g. 4001 user-rejected) just surface as an error.
+      const code = (e as { code?: number })?.code;
+      if (code === 4902) {
+        try {
+          await window.ethereum.request?.({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: hexId,
+                chainName: CONFIG.chainName,
+                nativeCurrency: {
+                  name: CONFIG.nativeCurrency,
+                  symbol: CONFIG.nativeCurrency,
+                  decimals: 18,
+                },
+                rpcUrls: [CONFIG.rpc],
+                ...(CONFIG.explorerUrl
+                  ? { blockExplorerUrls: [CONFIG.explorerUrl] }
+                  : {}),
+              },
+            ],
+          });
+        } catch (addErr) {
+          setError(addErr instanceof Error ? addErr.message : "Failed to add network.");
+        }
+        return;
+      }
+      setError(e instanceof Error ? e.message : "Failed to switch network.");
+    }
+  }, []);
+
   const connect = useCallback(async () => {
     setConnecting(true);
     setError(null);
@@ -59,12 +101,17 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       setSigner(s);
       setAddress(await s.getAddress());
       setChainId(Number(net.chainId));
+      // Connected on the wrong network → prompt the wallet to switch right away
+      // instead of leaving the user on a passive "wrong network" state.
+      if (Number(net.chainId) !== CONFIG.chainId) {
+        await switchChain();
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to connect.");
     } finally {
       setConnecting(false);
     }
-  }, []);
+  }, [switchChain]);
 
   const disconnect = useCallback(async () => {
     // Revoke the eth_accounts permission so the eager reconnect on next load
@@ -80,19 +127,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
     setAddress(null);
     setSigner(null);
-  }, []);
-
-  const switchChain = useCallback(async () => {
-    if (!window.ethereum) return;
-    const hexId = "0x" + CONFIG.chainId.toString(16);
-    try {
-      await window.ethereum.request?.({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: hexId }],
-      });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to switch network.");
-    }
   }, []);
 
   // Single startup RPC for the token symbol; cached for the process lifetime.

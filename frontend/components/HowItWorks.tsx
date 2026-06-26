@@ -198,7 +198,7 @@ export function HowItWorks() {
 
         <SectionLabel>Official contracts and network</SectionLabel>
         <p style={{ margin: "0 0 var(--hl-space-6)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
-          Protect your funds from any scam! <b>Only trust the original Horizen contracts
+          Protect your funds! <b>Only trust the original Horizen contracts
           listed here</b>.
         </p>
         <div>
