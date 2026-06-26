@@ -297,6 +297,15 @@ h3 {
   }
 }
 
+/* The headline-stat header spacer only earns its keep when the standalone cards
+   sit beside the distribution-window box; once the layout stacks it would just
+   leave an empty gap above the first card, so drop it. */
+@media (max-width: 640px) {
+  .hl-stat-spacer {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0.01ms !important;

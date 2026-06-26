@@ -154,7 +154,7 @@ export function Dashboard() {
       </p>
 
       {/* Protocol stats */}
-      <SectionLabel>Protocol</SectionLabel>
+      <SectionLabel>Protocol:</SectionLabel>
       <div style={{ display: "flex", alignItems: "baseline", gap: "var(--hl-space-3)", marginBottom: "var(--hl-space-6)" }}>
         <span className="hl-label">Staking contract address: </span>
         <ExplorerAddress address={CONFIG.contractStaker} />
@@ -162,17 +162,61 @@ export function Dashboard() {
       {globalError ? (
         <div className="hl-alert hl-alert-error">{globalError}</div>
       ) : (
-        <div style={grid}>
-          <StatCard label={`Total ${symbol} Staked`} value={global ? formatToken(global.totalStaked, 6) : "…"} unit={symbol} highlight />
-          <StatCard label="Reward Rate" value={global ? formatToken(dailyRate(global.rewardRate), 6) : "…"} unit={`${symbol} / day`} />
-          <StatCard label="Est. APR" value={global ? formatPct(estimateApr(global.rewardRate, global.totalStaked)) : "…"} hint="Based on the current rate" />
-          <StatCard label="Distribution Ends" value={global ? <EndTime rewardEndTime={global.rewardEndTime} /> : "…"} />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--hl-space-5)", alignItems: "stretch" }}>
+          {/* Standalone protocol headline stats. The hidden header spacer mirrors
+              the distribution-window box's title (padding + heading + margin) so
+              the four headline numbers line up when the cards sit side by side. */}
+          <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column" }}>
+            <div
+              aria-hidden
+              className="hl-stat-spacer"
+              style={{
+                paddingTop: "var(--hl-space-5)",
+                fontFamily: "var(--font-sans)",
+                fontWeight: 700,
+                fontSize: 16,
+                marginBottom: "var(--hl-space-5)",
+                visibility: "hidden",
+              }}
+            >
+              &nbsp;
+            </div>
+            <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--hl-space-5)" }}>
+              <StatCard label={`Total ${symbol} Staked`} value={global ? formatToken(global.totalStaked, 6) : "…"} unit={symbol} highlight />
+              <StatCard label="Est. APR" value={global ? formatPct(estimateApr(global.rewardRate, global.totalStaked)) : "…"} hint="Based on the current rate" />
+            </div>
+          </div>
+          {/* Reward rate + end time describe only the active distribution window;
+              future top-ups can start a new one, so they're grouped under a label
+              that makes their "current, not final" nature explicit. */}
+          <div
+            className="hl-card"
+            style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", padding: "var(--hl-space-5)" }}
+          >
+            <div
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontWeight: 700,
+                fontSize: 16,
+                color: "var(--hl-navy)",
+                marginBottom: "var(--hl-space-5)",
+              }}
+            >
+              Current distribution window:
+            </div>
+            <div
+              style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--hl-space-5)" }}
+            >
+              <StatCard label="Reward Rate" value={global ? formatToken(dailyRate(global.rewardRate), 6) : "…"} unit={`${symbol} / day`} />
+              <StatCard label="Distribution Ends" value={global ? <EndTime rewardEndTime={global.rewardEndTime} /> : "…"} />
+            </div>
+          </div>
         </div>
       )}
 
       {/* User position */}
       <div style={{ marginTop: "var(--hl-space-12)" }}>
-        <SectionLabel>Your Position</SectionLabel>
+        <SectionLabel>Your Position:</SectionLabel>
         {!address ? (
           <div className="hl-card" style={{ textAlign: "center", padding: "var(--hl-space-12)" }}>
             <p style={{ color: "var(--hl-grey-text)", margin: 0 }}>
