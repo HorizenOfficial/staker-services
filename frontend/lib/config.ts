@@ -14,6 +14,26 @@ function chainNameFor(chainId: number): string {
 }
 
 const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "31337");
+const NATIVE_CURRENCY = process.env.NEXT_PUBLIC_NATIVE_CURRENCY ?? "ETH";
+
+if (process.env.NODE_ENV === "production") {
+  const missing = (
+    [
+      ["NEXT_PUBLIC_RPC", process.env.NEXT_PUBLIC_RPC],
+      ["NEXT_PUBLIC_CHAIN_ID", process.env.NEXT_PUBLIC_CHAIN_ID],
+      ["NEXT_PUBLIC_CONTRACT_STAKER", process.env.NEXT_PUBLIC_CONTRACT_STAKER],
+      ["NEXT_PUBLIC_CONTRACT_TOKEN", process.env.NEXT_PUBLIC_CONTRACT_TOKEN],
+      ["NEXT_PUBLIC_SUBGRAPH", process.env.NEXT_PUBLIC_SUBGRAPH],
+    ] as const
+  )
+    .filter(([, v]) => !v)
+    .map(([k]) => k);
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variables for production build: ${missing.join(", ")}`
+    );
+  }
+}
 
 export const CONFIG = {
   rpc: process.env.NEXT_PUBLIC_RPC ?? "http://localhost:8545",
@@ -25,7 +45,7 @@ export const CONFIG = {
   // Used to register the network in the wallet (wallet_addEthereumChain) when it
   // isn't known yet, so "switch network" can succeed instead of erroring 4902.
   chainName: chainNameFor(chainId),
-  nativeCurrency: "ETH",
+  nativeCurrency: NATIVE_CURRENCY,
   // Default on: present a single aggregated position and route "stake" to
   // stakeMore on the existing deposit. Disable to expose the multi-deposit model.
   singlePosition: (process.env.NEXT_PUBLIC_SINGLE_POSITION ?? "true") !== "false",

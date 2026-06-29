@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { fetchUserActivity, type ActivityItem } from "./subgraph";
 import { usePolling } from "./usePolling";
 
@@ -28,6 +28,7 @@ export function useActivity(address: string | null): ActivityState {
   const [canLoadMore, setCanLoadMore] = useState(false);
 
   const byKey = useRef<Map<string, ActivityItem>>(new Map());
+  const lastAddress = useRef<string | null>(null);
 
   const apply = useCallback(() => {
     const sorted = [...byKey.current.values()].sort((a, b) =>
@@ -42,9 +43,16 @@ export function useActivity(address: string | null): ActivityState {
   const loadLatest = useCallback(async () => {
     if (!address) {
       byKey.current = new Map();
+      lastAddress.current = null;
       setItems([]);
       setCanLoadMore(false);
       return;
+    }
+    if (lastAddress.current !== address) {
+      lastAddress.current = address;
+      byKey.current = new Map();
+      setItems([]);
+      setCanLoadMore(false);
     }
     setLoading(true);
     try {
@@ -77,14 +85,6 @@ export function useActivity(address: string | null): ActivityState {
       setLoading(false);
     }
   }, [address, items, apply]);
-
-  // Reset accumulated state when the address changes (runs before the poll
-  // below re-loads, so a stale address's rows never flash for the new one).
-  useEffect(() => {
-    byKey.current = new Map();
-    setItems([]);
-    setCanLoadMore(false);
-  }, [address]);
 
   usePolling(loadLatest, POLL_MS, !!address);
 

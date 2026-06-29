@@ -22,23 +22,30 @@ export function DepositsTable() {
   const symbol = useTokenSymbol();
   const [modal, setModal] = useState<{ mode: "stakeMore" | "withdraw"; deposit: DepositDetail } | null>(null);
 
-  const loadWallet = useCallback(async () => {
-    if (!active) return;
+  const loadWallet = useCallback(async (): Promise<bigint | null> => {
+    if (!active) return null;
     try {
       const { token } = getReadContracts();
-      setWalletBalance((await token.balanceOf(active)) as bigint);
+      return (await token.balanceOf(active)) as bigint;
     } catch {
-      /* ignore */
+      return null;
     }
   }, [active]);
 
   useEffect(() => {
-    loadWallet();
+    let on = true;
+    loadWallet().then((b) => {
+      if (on && b !== null) setWalletBalance(b);
+    });
+    return () => {
+      on = false;
+    };
   }, [loadWallet]);
 
   // refresh data after any action finishes (state returns to idle)
   const afterAction = useCallback(async () => {
-    await Promise.all([reload(), loadWallet()]);
+    const [, b] = await Promise.all([reload(), loadWallet()]);
+    if (b !== null) setWalletBalance(b);
   }, [reload, loadWallet]);
 
   const totalUnclaimed = deposits.reduce((a, d) => a + d.unclaimedRewards, 0n);

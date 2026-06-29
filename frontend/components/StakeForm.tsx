@@ -49,18 +49,24 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
   const [balance, setBalance] = useState<bigint | null>(null);
   const symbol = useTokenSymbol();
 
-  const loadBalance = useCallback(async () => {
-    if (!address) return;
+  const loadBalance = useCallback(async (): Promise<bigint | null> => {
+    if (!address) return null;
     try {
       const { token } = getReadContracts();
-      setBalance((await token.balanceOf(address)) as bigint);
+      return (await token.balanceOf(address)) as bigint;
     } catch {
-      /* ignore */
+      return null;
     }
   }, [address]);
 
   useEffect(() => {
-    loadBalance();
+    let active = true;
+    loadBalance().then((b) => {
+      if (active && b !== null) setBalance(b);
+    });
+    return () => {
+      active = false;
+    };
   }, [loadBalance]);
 
   useEffect(() => {

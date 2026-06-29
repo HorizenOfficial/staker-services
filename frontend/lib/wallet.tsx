@@ -25,6 +25,10 @@ interface WalletState {
   switchChain: () => Promise<void>;
 }
 
+type WalletSnapshot =
+  | { connected: false }
+  | { connected: true; address: string; chainId: number; signer: JsonRpcSigner };
+
 const WalletContext = createContext<WalletState | null>(null);
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
@@ -34,20 +38,19 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const refresh = useCallback(async () => {
-    if (typeof window === "undefined" || !window.ethereum) return;
+  const refresh = useCallback(async (): Promise<WalletSnapshot | null> => {
+    if (typeof window === "undefined" || !window.ethereum) return null;
     const provider = new BrowserProvider(window.ethereum);
     const accounts = await provider.send("eth_accounts", []);
-    if (accounts.length === 0) {
-      setAddress(null);
-      setSigner(null);
-      return;
-    }
+    if (accounts.length === 0) return { connected: false };
     const net = await provider.getNetwork();
     const s = await provider.getSigner();
-    setChainId(Number(net.chainId));
-    setAddress(await s.getAddress());
-    setSigner(s);
+    return {
+      connected: true,
+      address: await s.getAddress(),
+      chainId: Number(net.chainId),
+      signer: s,
+    };
   }, []);
 
   const switchChain = useCallback(async () => {
@@ -135,14 +138,25 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refresh();
+    const apply = (snap: WalletSnapshot | null) => {
+      if (!snap) return;
+      if (!snap.connected) {
+        setAddress(null);
+        setSigner(null);
+        return;
+      }
+      setChainId(snap.chainId);
+      setAddress(snap.address);
+      setSigner(snap.signer);
+    };
+    refresh().then(apply);
     const eth = window.ethereum as unknown as {
       on?: (e: string, cb: (...a: unknown[]) => void) => void;
       removeListener?: (e: string, cb: (...a: unknown[]) => void) => void;
     };
     if (!eth?.on) return;
-    const onAccounts = () => refresh();
-    const onChain = () => refresh();
+    const onAccounts = () => refresh().then(apply);
+    const onChain = () => refresh().then(apply);
     eth.on("accountsChanged", onAccounts);
     eth.on("chainChanged", onChain);
     return () => {

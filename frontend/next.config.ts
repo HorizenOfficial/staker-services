@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_SUBGRAPH: process.env.SUBGRAPH,
     NEXT_PUBLIC_EXPLORER_URL: process.env.EXPLORER_URL,
     NEXT_PUBLIC_SINGLE_POSITION: process.env.SINGLE_POSITION,
+    NEXT_PUBLIC_NATIVE_CURRENCY: process.env.NATIVE_CURRENCY,
   },
 };
 

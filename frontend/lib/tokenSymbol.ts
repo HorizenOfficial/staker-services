@@ -47,10 +47,6 @@ export function fetchTokenSymbol(): Promise<string> {
 export function useTokenSymbol(): string {
   const [symbol, setSymbol] = useState<string>(getTokenSymbol());
   useEffect(() => {
-    if (cachedSymbol !== null) {
-      setSymbol(cachedSymbol);
-      return;
-    }
     let active = true;
     fetchTokenSymbol().then((s) => {
       if (active) setSymbol(s);
