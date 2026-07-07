@@ -8,7 +8,7 @@ const CONTRACTS_SOURCE_URL = "https://github.com/HorizenLabs/staker";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="hl-label" style={{ display: "block", margin: "0 0 var(--hl-space-5)" }}>
+    <h2 className="hl-label hl-section-label" style={{ display: "block", margin: "34px 0 14px" }}>
       {children}
     </h2>
   );
@@ -86,13 +86,13 @@ function RefRow({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="hl-address hl-ref-value"
-          style={{ color: "var(--hl-navy)", textDecoration: "underline", whiteSpace: "nowrap" }}
+          className="hl-address hl-ref-value hl-contract-link"
+          style={{ whiteSpace: "nowrap" }}
         >
           {value} ↗
         </a>
       ) : (
-        <span className="hl-address hl-ref-value" style={{ color: "var(--hl-navy)", whiteSpace: "nowrap" }}>
+        <span className="hl-address hl-ref-value hl-contract-link" style={{ whiteSpace: "nowrap" }}>
           {value}
         </span>
       )}
@@ -103,8 +103,10 @@ function RefRow({
 export function HowItWorks() {
   const symbol = useTokenSymbol();
   return (
-    <div style={{ maxWidth: 880, width: "100%" }}>
-      <h1 style={{ fontSize: 45, marginBottom: "var(--hl-space-2)" }}>How it works</h1>
+    <div style={{ maxWidth: 1180, width: "100%" }}>
+      <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)", marginBottom: "var(--hl-space-2)" }}>
+        How it <em>works</em>.
+      </h1>
       <p style={{ color: "var(--hl-grey-text)", margin: "0 0 var(--hl-space-10)" }}>
         Security and transparency by design.
       </p>
@@ -131,7 +133,7 @@ export function HowItWorks() {
               href={CONTRACTS_SOURCE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "var(--hl-navy)", textDecoration: "underline" }}
+              style={{ color: "var(--hl-yellow)", textDecoration: "underline" }}
             >
               Staker contracts
             </a>

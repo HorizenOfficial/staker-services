@@ -62,8 +62,10 @@ export function HistoryTable() {
   const symbol = useTokenSymbol();
 
   return (
-    <div style={{ maxWidth: 880, width: "100%" }}>
-      <h1 style={{ fontSize: 45 }}>History</h1>
+    <div style={{ maxWidth: 1180, width: "100%" }}>
+      <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)" }}>
+        Your <em>history</em>.
+      </h1>
       <p style={{ color: "var(--hl-grey-text)", margin: "var(--hl-space-2) 0 var(--hl-space-8)" }}>
         All staking operations for the connected address.
       </p>
@@ -117,8 +119,8 @@ export function HistoryTable() {
                           href={txUrl(it.txHash)!}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hl-address"
-                          style={{ color: "var(--hl-navy)", whiteSpace: "nowrap", textDecoration: "underline" }}
+                          className="hl-address hl-contract-link"
+                          style={{ whiteSpace: "nowrap" }}
                         >
                           {shortHash(it.txHash)}
                         </a>

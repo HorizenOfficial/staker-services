@@ -140,32 +140,6 @@ export async function fetchUserActivity(
   }));
 }
 
-// ---- Trailing reward-notification history ----------------------------------
-
-const REWARDS_NOTIFIED_SINCE = /* GraphQL */ `
-  query RewardsNotifiedSince($since: BigInt!) {
-    rewardNotifiedEvents(
-      first: 1000
-      orderBy: blockTimestamp
-      orderDirection: desc
-      where: { blockTimestamp_gte: $since }
-    ) {
-      amount
-    }
-  }
-`;
-
-// Sum of RewardNotifiedEvent.amount (across all reward sources — every
-// notifyRewardAmount call, regardless of caller) since `sinceUnixSeconds`.
-// Capped at 1000 events, comfortably above any real top-up frequency for a
-// 24h trailing window; a pathological rate would undercount rather than error.
-export async function fetchRewardsNotifiedSince(sinceUnixSeconds: number): Promise<bigint> {
-  const data = await query<{ rewardNotifiedEvents: { amount: string }[] }>(REWARDS_NOTIFIED_SINCE, {
-    since: String(sinceUnixSeconds),
-  });
-  return data.rewardNotifiedEvents.reduce((sum, e) => sum + BigInt(e.amount), 0n);
-}
-
 export interface SubgraphMeta {
   block: number; // latest indexed block
   hasIndexingErrors: boolean;

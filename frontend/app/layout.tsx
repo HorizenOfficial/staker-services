@@ -47,7 +47,7 @@ export default function RootLayout({
             style={{
               display: "flex",
               justifyContent: "center",
-              padding: "clamp(40px, 6vw, 80px) clamp(20px, 4vw, 100px)",
+              padding: "clamp(40px, 6vw, 80px) clamp(20px, 4vw, 28px)",
             }}
           >
               {children}

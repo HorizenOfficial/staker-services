@@ -14,15 +14,14 @@ export function TestnetBanner() {
       aria-live="polite"
       className="hl-mono"
       style={{
-        background: "#0e1728",
-        color: "var(--hl-navy)",
+        background: "transparent",
+        color: "var(--hl-gold-bright)",
         textAlign: "center",
-        padding: "8px clamp(20px, 4vw, 100px)",
+        padding: "10px clamp(20px, 4vw, 28px)",
         fontWeight: 600,
         fontSize: 12,
         letterSpacing: 1.2,
         textTransform: "uppercase",
-        borderBottom: "2px solid var(--hl-gold)",
       }}
     >
       You are in testnet environment!

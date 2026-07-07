@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { useWallet } from "@/lib/wallet";
-import { useGlobalState, useTrailingRewards, useUserSummary, useLiveReward } from "@/lib/useDashboard";
+import { useGlobalState, useUserSummary, useLiveReward } from "@/lib/useDashboard";
 import { useDeposits } from "@/lib/useDeposits";
 import {
   addressUrl,
-  estimateTrailingApr,
+  dailyRate,
+  estimateApr,
   formatPct,
   formatToken,
   formatUsd,
@@ -28,31 +29,22 @@ function TokenSymbolLink({ symbol }: { symbol: string }) {
   const href = tokenUrl(CONFIG.contractToken);
   if (!href) return <>{symbol}</>;
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color: "var(--hl-navy)", textDecoration: "underline" }}
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer" className="hl-contract-link">
       {symbol}
     </a>
   );
 }
 
-// An address rendered in the shared navy style, linked to its block-explorer
-// page. Falls back to plain text when no explorer is configured.
+// An address rendered in the shared blue reference-link style, linked to its
+// block-explorer page. Falls back to plain text when no explorer is configured.
 function ExplorerAddress({ address }: { address: string }) {
   const href = addressUrl(address);
-  const style: React.CSSProperties = {
-    color: "var(--hl-navy)",
-    wordBreak: "break-all",
-    textDecoration: href ? "underline" : "none",
-  };
+  const style: React.CSSProperties = { wordBreak: "break-all", whiteSpace: "normal" };
   if (!href) {
     return <span className="hl-address" style={style}>{address}</span>;
   }
   return (
-    <a className="hl-address" href={href} target="_blank" rel="noopener noreferrer" style={style}>
+    <a className="hl-address hl-contract-link" href={href} target="_blank" rel="noopener noreferrer" style={style}>
       {address}
     </a>
   );
@@ -104,7 +96,6 @@ export function Dashboard() {
   const symbol = useTokenSymbol();
 
   const { data: global, error: globalError } = useGlobalState();
-  const { data: trailing } = useTrailingRewards();
   const priceUsd = useTokenPriceUsd();
   const { data: user, reload: reloadUser } = useUserSummary(active);
   const { deposits, reload: reloadDeposits } = useDeposits(active);
@@ -130,7 +121,7 @@ export function Dashboard() {
   }, [reloadUser, reloadDeposits]);
 
   return (
-    <div style={{ maxWidth: 1100, width: "100%" }}>
+    <div style={{ maxWidth: 1180, width: "100%" }}>
       {/* Hero */}
       <section className="hl-hero">
         <div>
@@ -240,24 +231,24 @@ export function Dashboard() {
               Annual rewards rate{" "}
               <span
                 className="hl-info"
-                title="Trailing rate across all reward sources, annualized from the last 24h of on-chain reward top-ups. Varies with pool size and source activity — not a guaranteed yield."
+                title="Annualized from the current on-chain reward rate, across all reward sources. Varies with pool size and source activity — not a guaranteed yield."
               >
                 i
               </span>
             </span>
             <div className="hl-stat-value gold">
-              {global && trailing ? formatPct(estimateTrailingApr(trailing.dailyAmount, global.totalStaked)) : "…"}
+              {global ? formatPct(estimateApr(dailyRate(global.rewardRate), global.totalStaked)) : "…"}
             </div>
-            <span className="hl-stat-unit">trailing · variable</span>
+            <span className="hl-stat-unit">current · variable</span>
           </div>
           <div className="hl-stat-cell">
             <span className="hl-label">
               Daily rewards{" "}
-              <span className="hl-info" title="ZEN distributed to the pool over the last 24 hours, across all sources.">
+              <span className="hl-info" title="ZEN distributed to the pool per day at the current on-chain reward rate, across all sources.">
                 i
               </span>
             </span>
-            <div className="hl-stat-value gold">{trailing ? formatToken(trailing.dailyAmount, 6) : "…"}</div>
+            <div className="hl-stat-value gold">{global ? formatToken(dailyRate(global.rewardRate), 6) : "…"}</div>
             <span className="hl-stat-unit">{symbol} / day</span>
           </div>
         </div>

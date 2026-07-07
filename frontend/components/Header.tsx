@@ -105,18 +105,18 @@ export function Header() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      style={{
-        position: "relative",
-        height: 80,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 clamp(20px, 4vw, 100px)",
-        background: "transparent",
-        borderBottom: "1px solid var(--hl-grey)",
-      }}
-    >
+    <header style={{ position: "relative", background: "transparent" }}>
+      <div
+        style={{
+          maxWidth: 1180,
+          margin: "0 auto",
+          height: 80,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 clamp(20px, 4vw, 28px)",
+        }}
+      >
       <div style={{ display: "flex", alignItems: "center", gap: "var(--hl-space-10)" }}>
         <Link
           href="/"
@@ -188,6 +188,7 @@ export function Header() {
           </svg>
         )}
       </button>
+      </div>
 
       <div id="mobile-menu" className={`hl-mobile-menu${menuOpen ? " open" : ""}`}>
         <nav

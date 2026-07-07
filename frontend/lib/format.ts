@@ -30,16 +30,24 @@ export function formatToken(value: bigint, maxFractionDigits = 4): string {
   return trimmed ? `${withGroups}.${trimmed}` : withGroups;
 }
 
+const SECONDS_PER_DAY = 86_400n;
 const DAYS_PER_YEAR = 365n;
 
-// Trailing annual rate: annualizes the actual amount notified via
-// RewardNotifiedEvent over the trailing 24h (across all reward sources), as a
-// share of total staked. Reflects real recent activity rather than the
-// current instantaneous on-chain rate. Returns a percentage, or null when
-// there is nothing staked.
-export function estimateTrailingApr(trailingDailyAmount: bigint, totalStaked: bigint): number | null {
+// rewardRate is ZEN/second (wei), live from the contract. This is the correct
+// source for "how much is streaming right now" — a top-up's effect on the
+// rate persists for the whole distribution window, so summing raw
+// RewardNotifiedEvent amounts over a fixed trailing window (e.g. 24h) would
+// read zero between infrequent top-ups even while a large one is actively
+// streaming. The contract already does the leftover/rollover math for us.
+export function dailyRate(rewardRate: bigint): bigint {
+  return rewardRate * SECONDS_PER_DAY;
+}
+
+// Annualizes a daily reward amount as a share of total staked. Returns a
+// percentage, or null when there is nothing staked.
+export function estimateApr(dailyAmount: bigint, totalStaked: bigint): number | null {
   if (totalStaked === 0n) return null;
-  const annual = trailingDailyAmount * DAYS_PER_YEAR;
+  const annual = dailyAmount * DAYS_PER_YEAR;
   // scale to keep precision, then divide back to a float percentage
   const bps = (annual * 1_000_000n) / totalStaked; // millionths
   return (Number(bps) / 1_000_000) * 100;

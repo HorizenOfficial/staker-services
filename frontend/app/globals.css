@@ -64,8 +64,26 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   color: var(--hl-navy);
   background: var(--hl-grey-light);
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* Faint blueprint grid, fading out toward the bottom of the viewport.
+   Negative z-index keeps it behind normal content without needing every
+   sibling to opt into its own stacking context. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(rgba(122, 148, 199, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122, 148, 199, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.25) 60%, transparent);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.25) 60%, transparent);
+  pointer-events: none;
+  z-index: -1;
 }
 
 h1,
@@ -268,6 +286,13 @@ h3 {
   color: var(--hl-grey-text);
 }
 
+/* Section-header variant of .hl-label — blue, wider letter-spacing (e.g. "How
+   rewards are accrued", "Official contracts and network"). */
+.hl-section-label {
+  color: var(--hl-yellow);
+  letter-spacing: 0.22em;
+}
+
 .hl-address {
   font-family: var(--font-mono), monospace;
   font-size: 13px;
@@ -333,7 +358,7 @@ h3 {
   right: 0;
   flex-direction: column;
   gap: var(--hl-space-6);
-  padding: var(--hl-space-8) clamp(20px, 4vw, 100px);
+  padding: var(--hl-space-8) clamp(20px, 4vw, 28px);
   background: linear-gradient(180deg, var(--hl-panel), var(--hl-panel-2));
   border-bottom: 1px solid var(--hl-grey);
   box-shadow: 0 12px 24px rgba(3, 8, 18, 0.5);
@@ -443,7 +468,9 @@ h3 {
   letter-spacing: -0.005em;
   margin-bottom: 26px;
 }
-.hl-hero h1 em {
+/* Any <em> inside an h1 gets the glow treatment — hero title, page titles
+   ("How it <em>works</em>.", "Your <em>history</em>.") alike. */
+h1 em {
   font-style: italic;
   color: var(--hl-yellow);
   text-shadow: 0 0 34px rgba(143, 169, 255, 0.45);
