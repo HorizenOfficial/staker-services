@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono, Roboto } from "next/font/google";
+import { Instrument_Serif, Inter, JetBrains_Mono } from "next/font/google";
 import { WalletProvider } from "@/lib/wallet";
 import { LearnedDepositsProvider } from "@/lib/learnedDeposits";
 import { Header } from "@/components/Header";
@@ -7,24 +7,25 @@ import { TestnetBanner } from "@/components/TestnetBanner";
 import { SubgraphHealthBanner } from "@/components/SubgraphHealthBanner";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-display",
+});
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   variable: "--font-sans",
 });
-const plexMono = IBM_Plex_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "600"],
+  weight: ["400", "500", "700"],
   variable: "--font-mono",
-});
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-body",
 });
 
 export const metadata: Metadata = {
-  title: "ZenStaker — Stake ZEN",
+  title: "Horizen — Stake ZEN. Earn on Horizen.",
   description: "Stake ZEN to earn ZEN rewards on the Horizen staking program.",
 };
 
@@ -35,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${plexSans.variable} ${plexMono.variable} ${roboto.variable}`}>
+      <body className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
         <WalletProvider>
           <LearnedDepositsProvider>
             <Header />

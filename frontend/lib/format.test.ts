@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseEther } from "ethers";
 import {
-  estimateApr,
+  estimateTrailingApr,
   formatPct,
   formatToken,
   truncateAddress,
@@ -25,15 +25,15 @@ describe("formatToken", () => {
   });
 });
 
-describe("estimateApr", () => {
+describe("estimateTrailingApr", () => {
   it("returns null when nothing is staked", () => {
-    expect(estimateApr(1n, 0n)).toBeNull();
+    expect(estimateTrailingApr(1n, 0n)).toBeNull();
   });
 
-  it("computes a 100% APR when annual emission equals total staked", () => {
-    const totalStaked = parseEther("100");
-    const perSecond = totalStaked / 31_536_000n;
-    expect(estimateApr(perSecond, totalStaked)).toBeCloseTo(100, 0);
+  it("computes a 100% APR when annualized trailing daily amount equals total staked", () => {
+    const totalStaked = parseEther("365");
+    const dailyAmount = totalStaked / 365n;
+    expect(estimateTrailingApr(dailyAmount, totalStaked)).toBeCloseTo(100, 0);
   });
 });
 

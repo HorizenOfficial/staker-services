@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getReadContracts } from "./contracts";
-import { fetchUserDepositIds } from "./subgraph";
+import { fetchRewardsNotifiedSince, fetchUserDepositIds } from "./subgraph";
 import { usePolling } from "./usePolling";
 
 const POLL_MS = 20_000;
+const DAY_SECONDS = 86_400;
 
 export interface GlobalState {
   totalStaked: bigint;
@@ -31,6 +32,34 @@ export function useGlobalState() {
       setError(null);
     } catch {
       setError("Unable to read on-chain state.");
+    }
+  }, []);
+
+  usePolling(load, POLL_MS);
+
+  return { data, error, reload: load };
+}
+
+export interface TrailingRewards {
+  // Sum of RewardNotifiedEvent.amount (all sources) over the trailing 24h.
+  dailyAmount: bigint;
+}
+
+// Trailing reward-distribution history from the subgraph — the "Annual
+// rewards rate" / "Daily rewards" headline stats reflect actual notified
+// amounts, not the current instantaneous on-chain rate.
+export function useTrailingRewards() {
+  const [data, setData] = useState<TrailingRewards | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const since = Math.floor(Date.now() / 1000) - DAY_SECONDS;
+      const dailyAmount = await fetchRewardsNotifiedSince(since);
+      setData({ dailyAmount });
+      setError(null);
+    } catch {
+      setError("Subgraph unavailable");
     }
   }, []);
 

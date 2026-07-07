@@ -130,7 +130,7 @@ export function ActionModal({
                 checked={claimRewards}
                 onChange={(e) => setClaimRewards(e.target.checked)}
                 disabled={busy}
-                style={{ accentColor: "var(--hl-yellow)" }}
+                style={{ accentColor: "var(--hl-gold)" }}
               />
               Claim pending rewards also (separate tx)
             </label>

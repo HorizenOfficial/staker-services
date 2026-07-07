@@ -287,7 +287,7 @@ function Th({ children, align = "left" }: { children: React.ReactNode; align?: "
   return (
     <th
       className="hl-label"
-      style={{ textAlign: align, padding: "var(--hl-space-5)", borderBottom: "3px solid var(--hl-yellow)" }}
+      style={{ textAlign: align, padding: "var(--hl-space-5)", borderBottom: "2px solid var(--hl-gold)" }}
     >
       {children}
     </th>
