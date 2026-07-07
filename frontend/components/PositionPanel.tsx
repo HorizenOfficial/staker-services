@@ -45,12 +45,18 @@ export function PositionPanel({
   symbol,
   address,
   position,
+  stakedBalance,
   liveUnclaimed,
   onRefresh,
 }: {
   symbol: string;
   address: string;
   position: DepositDetail | null;
+  // Total staked from getDepositorSummary — a pure on-chain aggregate that
+  // needs no deposit-ID lookup, so it stays correct even when the subgraph
+  // (and the learned-deposits cache) hasn't caught up with a just-created
+  // deposit yet. Falls back to `position` while it's still loading.
+  stakedBalance: bigint | null;
   liveUnclaimed: bigint | null;
   onRefresh: () => void;
 }) {
@@ -86,7 +92,7 @@ export function PositionPanel({
             Staked
           </div>
           <div className="hl-mono" style={{ fontSize: 24, fontWeight: 500 }}>
-            {position ? formatToken(position.balance) : "0"}
+            {formatToken(stakedBalance ?? position?.balance ?? 0n)}
           </div>
           <span className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)" }}>
             {symbol}

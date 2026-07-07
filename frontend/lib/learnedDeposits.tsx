@@ -2,9 +2,11 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-// Deposit IDs learned from stake receipts during this session, keyed by
-// lowercased owner address. These let the UI know about a just-created deposit
-// immediately — before the subgraph indexes it — and survive subgraph downtime.
+// Deposit IDs learned from stake receipts, keyed by lowercased owner address.
+// These let the UI know about a just-created deposit immediately — before the
+// subgraph indexes it — and survive both subgraph downtime/lag and a page
+// refresh (persisted to localStorage; a refresh right after staking, before
+// the subgraph has caught up, would otherwise show the position as empty).
 type LearnedMap = Record<string, string[]>;
 
 interface LearnedDepositsCtx {
@@ -13,9 +15,28 @@ interface LearnedDepositsCtx {
 }
 
 const Ctx = createContext<LearnedDepositsCtx | null>(null);
+const STORAGE_KEY = "zenstaker:learnedDeposits";
+
+function loadInitial(): LearnedMap {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as LearnedMap) : {};
+  } catch {
+    return {};
+  }
+}
+
+function persist(map: LearnedMap) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+  } catch {
+    /* storage unavailable (private mode, quota, ...) — in-memory state still works */
+  }
+}
 
 export function LearnedDepositsProvider({ children }: { children: React.ReactNode }) {
-  const [learned, setLearned] = useState<LearnedMap>({});
+  const [learned, setLearned] = useState<LearnedMap>(loadInitial);
 
   const add = useCallback((address: string, id: bigint) => {
     const key = address.toLowerCase();
@@ -23,7 +44,9 @@ export function LearnedDepositsProvider({ children }: { children: React.ReactNod
     setLearned((prev) => {
       const cur = prev[key] ?? [];
       if (cur.includes(idStr)) return prev;
-      return { ...prev, [key]: [...cur, idStr] };
+      const next = { ...prev, [key]: [...cur, idStr] };
+      persist(next);
+      return next;
     });
   }, []);
 

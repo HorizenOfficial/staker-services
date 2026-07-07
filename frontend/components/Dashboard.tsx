@@ -277,7 +277,14 @@ export function Dashboard() {
           </div>
         </>
       ) : CONFIG.singlePosition ? (
-        <PositionPanel symbol={symbol} address={address} position={position} liveUnclaimed={liveUnclaimed} onRefresh={refresh} />
+        <PositionPanel
+          symbol={symbol}
+          address={address}
+          position={position}
+          stakedBalance={user?.totalStaked ?? null}
+          liveUnclaimed={liveUnclaimed}
+          onRefresh={refresh}
+        />
       ) : (
         <>
           <SectionLabel>Your Position:</SectionLabel>
