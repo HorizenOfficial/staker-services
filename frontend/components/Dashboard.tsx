@@ -12,7 +12,6 @@ import {
   formatPct,
   formatToken,
   formatUsd,
-  tokenUrl,
   truncateAddress,
 } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
@@ -22,18 +21,6 @@ import { StatCard } from "./StatCard";
 import { StakeDialog } from "./StakeDialog";
 import { PositionPanel } from "./PositionPanel";
 import { RewardSourcesCard } from "./RewardSourcesCard";
-
-// The token symbol, linked to its block-explorer token page. Falls back to
-// plain text when no explorer is configured.
-function TokenSymbolLink({ symbol }: { symbol: string }) {
-  const href = tokenUrl(CONFIG.contractToken);
-  if (!href) return <>{symbol}</>;
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="hl-contract-link">
-      {symbol}
-    </a>
-  );
-}
 
 // An address rendered in the shared blue reference-link style, linked to its
 // block-explorer page. Falls back to plain text when no explorer is configured.
@@ -125,20 +112,14 @@ export function Dashboard() {
       {/* Hero */}
       <section className="hl-hero">
         <div>
-          <div className="hl-eyebrow">
-            <span className="hl-dot" aria-hidden="true" />
-            <span className="hl-label" style={{ color: "var(--hl-yellow)", letterSpacing: "0.24em" }}>
-              Horizen 2.0 · ZenIP-42408 reward program
-            </span>
-          </div>
           <h1>
             Stake <em>{symbol}</em>.<br />
             Earn on <em>Horizen</em>.
           </h1>
           <p style={{ color: "var(--hl-grey-text)", fontSize: 16.5, maxWidth: "52ch", marginBottom: "var(--hl-space-6)" }}>
-            One staking pool, <strong>rewards from multiple independent sources</strong> — DAO
-            bootstrap, liquidity earnings, ecosystem fee shares, and network operations. Rewards
-            accrue on-chain and are paid in <TokenSymbolLink symbol={symbol} />.
+            Zen staking is the hub for participation in the {symbol} token economy - with a single
+            staking pool that <strong>earns rewards from multiple, independent sources</strong> tied
+            to the real ecosystem activity.
           </p>
           <div className="hl-chips">
             <span className="hl-chip">
@@ -148,13 +129,13 @@ export function Dashboard() {
               <ChipIcon /> On-chain settlement
             </span>
             <span className="hl-chip">
-              <ChipIcon /> Multi-source rewards
+              <ChipIcon /> {symbol} token rewards
             </span>
           </div>
         </div>
 
         <aside className="hl-card hl-setup" aria-label="Get set up">
-          <span className="hl-label">Add to wallet</span>
+          <span className="hl-label">Add Horizen and {symbol} to your wallet</span>
           <div className="hl-wallet-row">
             <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={addNetwork}>
               + Network
@@ -195,7 +176,7 @@ export function Dashboard() {
             </li>
           </ol>
           <div className="hl-contract-line">
-            <span className="hl-label">Staking contract</span>
+            <span className="hl-label">{symbol} staking contract</span>
             {addressUrl(CONFIG.contractStaker) ? (
               <a className="hl-address hl-contract-link" href={addressUrl(CONFIG.contractStaker)!} target="_blank" rel="noopener noreferrer">
                 {truncateAddress(CONFIG.contractStaker)} ↗
@@ -239,7 +220,7 @@ export function Dashboard() {
             <div className="hl-stat-value gold">
               {global ? formatPct(estimateApr(dailyRate(global.rewardRate), global.totalStaked)) : "…"}
             </div>
-            <span className="hl-stat-unit">current · variable</span>
+            <span className="hl-stat-unit">Trailing · variable</span>
           </div>
           <div className="hl-stat-cell">
             <span className="hl-label">

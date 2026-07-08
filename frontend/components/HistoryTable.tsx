@@ -64,7 +64,7 @@ export function HistoryTable() {
   return (
     <div style={{ maxWidth: 1180, width: "100%" }}>
       <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)" }}>
-        Your <em>history</em>.
+        Staking transaction <em>history</em>.
       </h1>
       <p style={{ color: "var(--hl-grey-text)", margin: "var(--hl-space-2) 0 var(--hl-space-8)" }}>
         All staking operations for the connected address.

@@ -1,22 +1,22 @@
-type SourceStatus = "Live" | "Onboarding" | "Roadmap";
+type SourceStatus = "Live" | "Onboarding" | "In development";
 
 // Static, hardcoded per product/marketing direction (not derived from
 // on-chain data — the contract itself only sees aggregate notifyRewardAmount
 // top-ups, not which of these funded a given one).
 const SOURCES: { label: string; status: SourceStatus }[] = [
-  { label: "DAO bootstrap", status: "Live" },
-  { label: "DAO liquidity earnings", status: "Live" },
-  { label: "Ecosystem protocol fee shares", status: "Onboarding" },
-  { label: "zkVerify VFY emissions", status: "Live" },
-  { label: "Vela confidential compute", status: "Roadmap" },
-  { label: "Sequencer revenue", status: "Live" },
+  { label: "Horizen DAO - ZEN bootstrap", status: "Live" },
+  { label: "Horizen DAO - ZEN LP earnings", status: "Live" },
+  { label: "Ecosystem aplications & protocol fee sharing", status: "Onboarding" },
+  { label: "Horizen Foundation - zkVerify node emissions", status: "Live" },
+  { label: "Horizen Labs - Vela confidential compute", status: "In development" },
+  { label: "Horizen L3 sequencer fees", status: "Live" },
 ];
 
 export function RewardSourcesCard() {
   return (
     <div className="hl-card" aria-label="Where rewards come from">
       <h2 className="hl-card-title" style={{ marginBottom: "var(--hl-space-6)" }}>
-        Reward sources
+        Rewards pool sources
       </h2>
       <ul className="hl-sources">
         {SOURCES.map((s) => (
@@ -27,8 +27,7 @@ export function RewardSourcesCard() {
         ))}
       </ul>
       <p className="hl-sources-note">
-        Every source is tied to real ecosystem activity. No single source carries the program —
-        the combination does.
+        Approved by the Horizen DAO - ZenIP-42408
       </p>
     </div>
   );

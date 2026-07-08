@@ -104,17 +104,13 @@ export function HowItWorks() {
   const symbol = useTokenSymbol();
   return (
     <div style={{ maxWidth: 1180, width: "100%" }}>
-      <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)", marginBottom: "var(--hl-space-2)" }}>
-        How it <em>works</em>.
+      <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)", marginBottom: "var(--hl-space-10)" }}>
+        How <em>ZEN staking</em> works.
       </h1>
-      <p style={{ color: "var(--hl-grey-text)", margin: "0 0 var(--hl-space-10)" }}>
-        Security and transparency by design.
-      </p>
 
       <div className="hl-card">
         <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
-          Zen Staking is the official staking program for the Horizen chain. <br/>
-          <b>Fully on-chain and non-custodial.</b> Your {symbol} is locked only
+          <b>Zen staking on Horizen is fully on-chain and non-custodial.</b> Your {symbol} is locked only
           inside the public staking contract - no intermediary ever takes custody -
           and every balance, reward and transaction is verifiable on the block explorer.
         </p>
@@ -152,7 +148,7 @@ export function HowItWorks() {
         <SectionLabel>How rewards are accrued</SectionLabel>
         <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
           Rewards are funded from multiple independent sources and streamed to stakers
-          automatically — there is no manual allocation and no discretionary payout.
+          automatically.
         </p>
         <div
           style={{
@@ -163,16 +159,13 @@ export function HowItWorks() {
         >
           <Step n={1} title="Varied rewards sources fund the contract">
             Varied rewards sources periodically top up the staking contract by
-            sending {symbol} through the on-chain reward-notification method
-            (<span className="hl-mono">notifyRewardAmount</span>). Every top-up is a
-            public transaction, verifiable on the block explorer.
+            sending {symbol} to the staking rewards pool.
           </Step>
-          <Step n={2} title="You accrue continuously, pro-rata">
-            While the window is active, rewards accrue every block in proportion to
-            your share of the total staked {symbol}. Nothing needs to be done for them to
-            grow — your balance updates automatically.
+          <Step n={2} title="Rewards accrue continuously">
+            When you stake, rewards accrue every block in proportion to
+            your share of the total staked {symbol}. Your balance updates automatically.
           </Step>
-          <Step n={3} title="Claim anytime — nothing is lost">
+          <Step n={3} title="Claim anytime">
             Accrued rewards are held for you on-chain and keep accumulating until you
             claim. There is no lock-up and no deadline: claim whenever you like.
           </Step>
