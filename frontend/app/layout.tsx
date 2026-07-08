@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono, Roboto } from "next/font/google";
+import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import { WalletProvider } from "@/lib/wallet";
 import { LearnedDepositsProvider } from "@/lib/learnedDeposits";
 import { Header } from "@/components/Header";
@@ -7,24 +7,24 @@ import { TestnetBanner } from "@/components/TestnetBanner";
 import { SubgraphHealthBanner } from "@/components/SubgraphHealthBanner";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display",
+});
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   variable: "--font-sans",
 });
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-mono",
-});
-const roboto = Roboto({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-body",
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
-  title: "ZenStaker — Stake ZEN",
+  title: "Horizen — Stake ZEN. Earn on Horizen.",
   description: "Stake ZEN to earn ZEN rewards on the Horizen staking program.",
 };
 
@@ -35,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${plexSans.variable} ${plexMono.variable} ${roboto.variable}`}>
+      <body className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable}`}>
         <WalletProvider>
           <LearnedDepositsProvider>
             <Header />
@@ -46,7 +46,7 @@ export default function RootLayout({
             style={{
               display: "flex",
               justifyContent: "center",
-              padding: "clamp(40px, 6vw, 80px) clamp(20px, 4vw, 100px)",
+              padding: "clamp(40px, 6vw, 80px) clamp(20px, 4vw, 28px)",
             }}
           >
               {children}

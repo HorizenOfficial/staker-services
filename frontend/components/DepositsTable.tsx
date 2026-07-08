@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { formatUnits } from "ethers";
 import { useWallet } from "@/lib/wallet";
 import { useDeposits, type DepositDetail } from "@/lib/useDeposits";
@@ -10,7 +10,10 @@ import { getReadContracts } from "@/lib/contracts";
 import { CONFIG } from "@/lib/config";
 import { formatToken } from "@/lib/format";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
+import { usePolling } from "@/lib/usePolling";
 import { ActionModal } from "./ActionModal";
+
+const BALANCE_POLL_MS = 10_000;
 
 export function DepositsTable() {
   const { address, isCorrectChain } = useWallet();
@@ -22,30 +25,25 @@ export function DepositsTable() {
   const symbol = useTokenSymbol();
   const [modal, setModal] = useState<{ mode: "stakeMore" | "withdraw"; deposit: DepositDetail } | null>(null);
 
-  const loadWallet = useCallback(async (): Promise<bigint | null> => {
-    if (!active) return null;
+  const loadWallet = useCallback(async () => {
+    if (!active) {
+      setWalletBalance(0n);
+      return;
+    }
     try {
       const { token } = getReadContracts();
-      return (await token.balanceOf(active)) as bigint;
+      const b = (await token.balanceOf(active)) as bigint;
+      setWalletBalance(b);
     } catch {
-      return null;
+      // keep the last known balance on a transient read failure
     }
   }, [active]);
 
-  useEffect(() => {
-    let on = true;
-    loadWallet().then((b) => {
-      if (on && b !== null) setWalletBalance(b);
-    });
-    return () => {
-      on = false;
-    };
-  }, [loadWallet]);
+  usePolling(loadWallet, BALANCE_POLL_MS);
 
   // refresh data after any action finishes (state returns to idle)
   const afterAction = useCallback(async () => {
-    const [, b] = await Promise.all([reload(), loadWallet()]);
-    if (b !== null) setWalletBalance(b);
+    await Promise.all([reload(), loadWallet()]);
   }, [reload, loadWallet]);
 
   const totalUnclaimed = deposits.reduce((a, d) => a + d.unclaimedRewards, 0n);
@@ -287,7 +285,7 @@ function Th({ children, align = "left" }: { children: React.ReactNode; align?: "
   return (
     <th
       className="hl-label"
-      style={{ textAlign: align, padding: "var(--hl-space-5)", borderBottom: "3px solid var(--hl-yellow)" }}
+      style={{ textAlign: align, padding: "var(--hl-space-5)", borderBottom: "2px solid var(--hl-gold)" }}
     >
       {children}
     </th>

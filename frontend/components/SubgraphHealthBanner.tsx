@@ -34,7 +34,7 @@ export function SubgraphHealthBanner() {
       role="status"
       aria-live="polite"
       className={`hl-alert hl-alert-${severity}`}
-      style={{ margin: "var(--hl-space-4) clamp(20px, 4vw, 100px) 0" }}
+      style={{ margin: "var(--hl-space-4) clamp(20px, 4vw, 28px) 0" }}
     >
       {message}
     </div>

@@ -49,4 +49,14 @@ export const CONFIG = {
   // Default on: present a single aggregated position and route "stake" to
   // stakeMore on the existing deposit. Disable to expose the multi-deposit model.
   singlePosition: (process.env.NEXT_PUBLIC_SINGLE_POSITION ?? "true") !== "false",
+  // Onboarding links (dashboard hero): where to bridge ETH / ZEN in from Base.
+  // Optional — the step renders as plain (non-linked) text when unset.
+  bridgeEthUrl: process.env.NEXT_PUBLIC_BRIDGE_ETH_URL ?? "",
+  bridgeZenUrl: process.env.NEXT_PUBLIC_BRIDGE_ZEN_URL ?? "",
+  // CoinGecko coin id used to price the staked token in USD ("Staked value"
+  // stat). "zencash" is correct — CoinGecko kept ZEN's pre-rebrand slug (the
+  // "horizen" id does not exist there; verified via /api/v3/search?query=horizen).
+  // Leave blank to disable the price fetch entirely, e.g. when the deployed
+  // token isn't real ZEN (a devnet mock).
+  coingeckoId: process.env.NEXT_PUBLIC_COINGECKO_ID ?? "zencash",
 } as const;

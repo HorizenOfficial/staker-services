@@ -7,15 +7,15 @@ import { useWallet } from "@/lib/wallet";
 import { truncateAddress } from "@/lib/format";
 
 import { CONFIG } from "@/lib/config";
-import { Logo } from "./Logo";
 
-// "Stake" is always handled via the dashboard dialog (no tab). "My Deposits"
-// only exists in the multi-deposit model; single-position manages from the dashboard.
+// The home page is the "Stake" tab (stake/withdraw/claim live inline there,
+// no separate /stake page). "My Deposits" only exists in the multi-deposit
+// model; single-position manages everything from that same page.
 const NAV = [
-  { href: "/", label: "Dashboard" },
+  { href: "/", label: "Stake" },
   ...(CONFIG.singlePosition ? [] : [{ href: "/deposits", label: "My Deposits" }]),
-  { href: "/history", label: "History" },
   { href: "/how-it-works", label: "How it works" },
+  { href: "/history", label: "History" },
 ];
 
 function NavLink({
@@ -34,17 +34,17 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="hl-mono"
       onClick={onNavigate}
       style={{
-        fontWeight: 600,
-        fontSize: block ? 14 : 12,
-        letterSpacing: 1.2,
-        textTransform: "uppercase",
+        fontFamily: "var(--font-display), sans-serif",
+        fontWeight: 400,
+        fontSize: block ? 14 : 12.5,
+        letterSpacing: "0.06em",
         textDecoration: "none",
-        color: active ? "var(--hl-navy)" : "var(--hl-grey-text)",
-        borderBottom: active ? "2px solid var(--hl-yellow)" : "2px solid transparent",
-        paddingBottom: 4,
+        color: active ? "var(--hl-yellow)" : "var(--hl-grey-text)",
+        background: active && !block ? "rgba(143, 169, 255, 0.1)" : "transparent",
+        borderRadius: 999,
+        padding: block ? "8px 0" : "8px 14px",
         display: block ? "block" : undefined,
       }}
     >
@@ -68,9 +68,13 @@ function WalletControls() {
             Wrong network — Switch
           </button>
         )}
-        <span className="hl-address">{truncateAddress(address)}</span>
-        <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={disconnect}>
-          Disconnect
+        <button
+          className="hl-btn hl-btn-ghost hl-btn-sm hl-address"
+          onClick={disconnect}
+          title="Disconnect"
+          aria-label={`Disconnect ${address}`}
+        >
+          {truncateAddress(address)}
         </button>
       </>
     );
@@ -91,56 +95,46 @@ export function Header() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      style={{
-        position: "relative",
-        height: 80,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 clamp(20px, 4vw, 100px)",
-        background: "var(--hl-white)",
-        borderBottom: "1px solid var(--hl-grey)",
-      }}
-    >
+    <header style={{ position: "relative", background: "transparent" }}>
+      <div
+        style={{
+          maxWidth: 1180,
+          margin: "0 auto",
+          height: 80,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 clamp(20px, 4vw, 28px)",
+        }}
+      >
       <div style={{ display: "flex", alignItems: "center", gap: "var(--hl-space-10)" }}>
         <Link
           href="/"
-          aria-label="Zen Staking — Home"
+          aria-label="Horizen staking — Home"
           onClick={closeMenu}
           style={{
-            height: 80,
             display: "flex",
             alignItems: "center",
-            gap: "var(--hl-space-4)",
-            background: "#EECA21",
+            gap: 6,
             color: "var(--hl-navy)",
             textDecoration: "none",
-            // flush to the very top-left corner: cancel the header's left padding
-            marginLeft: "calc(-1 * clamp(20px, 4vw, 100px))",
-            paddingLeft: "clamp(20px, 4vw, 100px)",
-            paddingRight: "var(--hl-space-4)",
           }}
         >
-          <Logo />
+          {/* eslint-disable-next-line @next/next/no-img-element -- static export, no image optimizer */}
+          <img src="/Horizen2.0-logo_primary-white.svg" alt="Horizen" height={26} style={{ display: "block" }} />
           <span
-            className="hl-mono hl-brand-label"
+            className="hl-brand-label"
             style={{
-              // lighter yellow so the box stands apart from the logo's yellow
-              background: "#F6E07A",
-              height: 80,
-              display: "flex",
-              alignItems: "center",
-              padding: "30px 30px",
-              width: "160px",
-              fontWeight: 600,
-              fontSize: 13,
-              letterSpacing: 1.2,
+              fontFamily: "var(--font-display), sans-serif",
+              fontWeight: 500,
+              fontSize: 15,
+              letterSpacing: "0.06em",
               textTransform: "uppercase",
+              color: "var(--hl-yellow)",
               whiteSpace: "nowrap",
             }}
           >
-            Zen Staking
+            / STAKING
           </span>
         </Link>
         <nav className="hl-nav-desktop" aria-label="Primary">
@@ -182,6 +176,7 @@ export function Header() {
           </svg>
         )}
       </button>
+      </div>
 
       <div id="mobile-menu" className={`hl-mobile-menu${menuOpen ? " open" : ""}`}>
         <nav

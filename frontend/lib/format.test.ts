@@ -30,10 +30,10 @@ describe("estimateApr", () => {
     expect(estimateApr(1n, 0n)).toBeNull();
   });
 
-  it("computes a 100% APR when annual emission equals total staked", () => {
-    const totalStaked = parseEther("100");
-    const perSecond = totalStaked / 31_536_000n;
-    expect(estimateApr(perSecond, totalStaked)).toBeCloseTo(100, 0);
+  it("computes a 100% APR when annualized daily amount equals total staked", () => {
+    const totalStaked = parseEther("365");
+    const dailyAmount = totalStaked / 365n;
+    expect(estimateApr(dailyAmount, totalStaked)).toBeCloseTo(100, 0);
   });
 });
 

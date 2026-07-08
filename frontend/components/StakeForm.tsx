@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { formatUnits, parseEther } from "ethers";
 import { useWallet } from "@/lib/wallet";
 import { useStake } from "@/lib/useStake";
@@ -10,6 +10,9 @@ import { getReadContracts } from "@/lib/contracts";
 import { CONFIG } from "@/lib/config";
 import { formatToken } from "@/lib/format";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
+import { usePolling } from "@/lib/usePolling";
+
+const BALANCE_POLL_MS = 10_000;
 
 // Maps each in-progress phase to its step number + label. The stake steps shift
 // from 3/4 & 4/4 (approval required) down to 1/2 & 2/2 when the allowance
@@ -37,7 +40,7 @@ function stepInfo(
 // create-or-increase (single-position); staking always uses approve + stake.
 export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onCancel?: () => void }) {
   const { address, isCorrectChain } = useWallet();
-  const { status, error, depositId, totalSteps, stake, reset } = useStake();
+  const { status, error, totalSteps, stake, reset } = useStake();
   const { add: learnDeposit } = useLearnedDeposits();
 
   const active = address && isCorrectChain ? address : null;
@@ -49,32 +52,21 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
   const [balance, setBalance] = useState<bigint | null>(null);
   const symbol = useTokenSymbol();
 
-  const loadBalance = useCallback(async (): Promise<bigint | null> => {
-    if (!address) return null;
+  const loadBalance = useCallback(async () => {
+    if (!address) {
+      setBalance(null);
+      return;
+    }
     try {
       const { token } = getReadContracts();
-      return (await token.balanceOf(address)) as bigint;
+      const b = (await token.balanceOf(address)) as bigint;
+      setBalance(b);
     } catch {
-      return null;
+      // keep the last known balance on a transient read failure
     }
   }, [address]);
 
-  useEffect(() => {
-    let active = true;
-    loadBalance().then((b) => {
-      if (active && b !== null) setBalance(b);
-    });
-    return () => {
-      active = false;
-    };
-  }, [loadBalance]);
-
-  useEffect(() => {
-    if (status === "success") {
-      if (depositId != null && address) learnDeposit(address, depositId);
-      onSuccess?.();
-    }
-  }, [status, depositId, address, learnDeposit, onSuccess]);
+  usePolling(loadBalance, BALANCE_POLL_MS);
 
   const step = stepInfo(status, totalSteps);
   const busy = step !== null;
@@ -91,9 +83,15 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
   }
   const canSubmit = !!active && !!amount && !amountError && !busy;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (canSubmit) stake(amount, existing?.depositId ?? null);
+    if (!canSubmit) return;
+    const outcome = await stake(amount, existing?.depositId ?? null);
+    if (outcome.ok) {
+      if (outcome.depositId != null && address) learnDeposit(address, outcome.depositId);
+      loadBalance();
+      onSuccess?.();
+    }
   };
 
   return (
@@ -103,8 +101,8 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
         {balance !== null && (
           <button
             type="button"
-            className="hl-label"
-            style={{ background: "none", border: 0, cursor: "pointer", color: "var(--hl-navy)", textDecoration: "underline" }}
+            className="hl-label hl-contract-link"
+            style={{ background: "none", border: 0, cursor: "pointer" }}
             onClick={() => setAmount(formatUnits(balance, 18))}
           >
             Balance: {formatToken(balance)} {symbol} · Max

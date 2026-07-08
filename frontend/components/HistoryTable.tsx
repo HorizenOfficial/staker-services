@@ -17,7 +17,7 @@ function shortHash(hash: string): string {
 
 const TYPE_META: Record<ActivityType, { label: string; color: string; bg: string }> = {
   stake: { label: "Stake", color: "var(--hl-teal-text)", bg: "var(--hl-teal-light)" },
-  withdraw: { label: "Withdraw", color: "var(--hl-navy)", bg: "var(--hl-grey-light)" },
+  withdraw: { label: "Withdraw", color: "var(--hl-grey-text)", bg: "rgba(148, 168, 206, 0.08)" },
   claim: { label: "Claim", color: "var(--hl-lavender-text)", bg: "var(--hl-lavender-light)" },
 };
 
@@ -43,7 +43,7 @@ function TypeBadge({ type }: { type: ActivityType }) {
 const th: React.CSSProperties = {
   textAlign: "left",
   padding: "var(--hl-space-5)",
-  borderBottom: "3px solid var(--hl-yellow)",
+  borderBottom: "2px solid var(--hl-gold)",
 };
 const td: React.CSSProperties = { padding: "var(--hl-space-5)", fontSize: 14 };
 
@@ -62,8 +62,10 @@ export function HistoryTable() {
   const symbol = useTokenSymbol();
 
   return (
-    <div style={{ maxWidth: 880, width: "100%" }}>
-      <h1 style={{ fontSize: 45 }}>History</h1>
+    <div style={{ maxWidth: 1180, width: "100%" }}>
+      <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)" }}>
+        Staking transaction <em>history</em>.
+      </h1>
       <p style={{ color: "var(--hl-grey-text)", margin: "var(--hl-space-2) 0 var(--hl-space-8)" }}>
         All staking operations for the connected address.
       </p>
@@ -117,8 +119,8 @@ export function HistoryTable() {
                           href={txUrl(it.txHash)!}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hl-address"
-                          style={{ color: "var(--hl-navy)", whiteSpace: "nowrap", textDecoration: "underline" }}
+                          className="hl-address hl-contract-link"
+                          style={{ whiteSpace: "nowrap" }}
                         >
                           {shortHash(it.txHash)}
                         </a>

@@ -8,16 +8,7 @@ const CONTRACTS_SOURCE_URL = "https://github.com/HorizenLabs/staker";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2
-      style={{
-        fontSize: 14,
-        letterSpacing: 4,
-        textTransform: "uppercase",
-        color: "var(--hl-grey-text)",
-        fontFamily: "var(--font-sans)",
-        margin: "0 0 var(--hl-space-5)",
-      }}
-    >
+    <h2 className="hl-label hl-section-label" style={{ display: "block", margin: "34px 0 14px" }}>
       {children}
     </h2>
   );
@@ -26,7 +17,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 // A single trust/security point.
 function Point({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ borderLeft: "3px solid var(--hl-yellow)", paddingLeft: "var(--hl-space-5)" }}>
+    <div style={{ borderLeft: "3px solid var(--hl-gold)", paddingLeft: "var(--hl-space-5)" }}>
       <h3 style={{ fontSize: 16, margin: "0 0 var(--hl-space-2)" }}>{title}</h3>
       <p style={{ color: "var(--hl-grey-text)", fontSize: 14, margin: 0, lineHeight: 1.55 }}>
         {children}
@@ -49,8 +40,8 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "var(--hl-yellow)",
-          color: "var(--hl-navy)",
+          background: "var(--hl-gold)",
+          color: "#1b1206",
           fontWeight: 600,
           fontSize: 13,
         }}
@@ -95,13 +86,13 @@ function RefRow({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="hl-address hl-ref-value"
-          style={{ color: "var(--hl-navy)", textDecoration: "underline", whiteSpace: "nowrap" }}
+          className="hl-address hl-ref-value hl-contract-link"
+          style={{ whiteSpace: "nowrap" }}
         >
           {value} ↗
         </a>
       ) : (
-        <span className="hl-address hl-ref-value" style={{ color: "var(--hl-navy)", whiteSpace: "nowrap" }}>
+        <span className="hl-address hl-ref-value hl-contract-link" style={{ whiteSpace: "nowrap" }}>
           {value}
         </span>
       )}
@@ -112,16 +103,14 @@ function RefRow({
 export function HowItWorks() {
   const symbol = useTokenSymbol();
   return (
-    <div style={{ maxWidth: 880, width: "100%" }}>
-      <h1 style={{ fontSize: 45, marginBottom: "var(--hl-space-2)" }}>How it works</h1>
-      <p style={{ color: "var(--hl-grey-text)", margin: "0 0 var(--hl-space-10)" }}>
-        Security and transparency by design.
-      </p>
+    <div style={{ maxWidth: 1180, width: "100%" }}>
+      <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)", marginBottom: "var(--hl-space-10)" }}>
+        How <em>ZEN staking</em> works.
+      </h1>
 
       <div className="hl-card">
         <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
-          Zen Staking is the official staking program for the Horizen chain. <br/>
-          <b>Fully on-chain and non-custodial.</b> Your {symbol} is locked only
+          <b>ZEN staking on Horizen is fully on-chain and non-custodial.</b> Your {symbol} is locked only
           inside the public staking contract - no intermediary ever takes custody -
           and every balance, reward and transaction is verifiable on the block explorer.
         </p>
@@ -140,7 +129,7 @@ export function HowItWorks() {
               href={CONTRACTS_SOURCE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "var(--hl-navy)", textDecoration: "underline" }}
+              style={{ color: "var(--hl-yellow)", textDecoration: "underline" }}
             >
               Staker contracts
             </a>
@@ -158,8 +147,8 @@ export function HowItWorks() {
 
         <SectionLabel>How rewards are accrued</SectionLabel>
         <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
-          Rewards are funded by the Horizen Foundation and streamed to stakers
-          automatically — there is no manual allocation and no discretionary payout.
+          Rewards are funded from multiple independent sources and streamed to stakers
+          automatically.
         </p>
         <div
           style={{
@@ -168,29 +157,15 @@ export function HowItWorks() {
             marginBottom: "var(--hl-space-10)",
           }}
         >
-          <Step n={1} title="The Foundation funds the contract">
-            The Horizen Foundation periodically tops up the staking contract by
-            sending {symbol} through the on-chain reward-notification method
-            (<span className="hl-mono">notifyRewardAmount</span>). Every top-up is a
-            public transaction, verifiable on the block explorer.
+          <Step n={1} title="Varied rewards sources fund the contract">
+            Varied rewards sources periodically top up the staking contract by
+            sending {symbol} to the staking rewards pool.
           </Step>
-          <Step n={2} title="Each top-up is streamed over a fixed window">
-            Rewards are not paid out all at once. Each top-up is distributed at a
-            constant rate over a fixed time window set on-chain. The current rate and
-            the window&apos;s end are shown on the dashboard as{" "}
-            <strong>Reward Rate</strong> ({symbol} / day) and <strong>Distribution Ends</strong>.
+          <Step n={2} title="Rewards accrue continuously">
+            When you stake, rewards accrue every block in proportion to
+            your share of the total staked {symbol}. Your balance updates automatically.
           </Step>
-          <Step n={3} title="You accrue continuously, pro-rata">
-            While the window is active, rewards accrue every block in proportion to
-            your share of the total staked {symbol}. Nothing needs to be done for them to
-            grow — your balance updates automatically.
-          </Step>
-          <Step n={4} title="New funding rolls into the schedule">
-            If the Foundation adds funds before the current window ends, any rewards
-            still to be distributed are combined with the new amount and the rate and
-            end time are recalculated accordingly.
-          </Step>
-          <Step n={5} title="Claim anytime — nothing is lost">
+          <Step n={3} title="Claim anytime">
             Accrued rewards are held for you on-chain and keep accumulating until you
             claim. There is no lock-up and no deadline: claim whenever you like.
           </Step>

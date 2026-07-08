@@ -11,7 +11,7 @@ import {
 import { BrowserProvider, JsonRpcSigner } from "ethers";
 import { connectWallet } from "./contracts";
 import { CONFIG } from "./config";
-import { fetchTokenSymbol } from "./tokenSymbol";
+import { fetchTokenSymbol, getTokenSymbol } from "./tokenSymbol";
 
 interface WalletState {
   address: string | null;
@@ -23,6 +23,20 @@ interface WalletState {
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   switchChain: () => Promise<void>;
+  // Register the network / the staked token with the wallet (EIP-3085 /
+  // EIP-747). Neither requires a connected account.
+  addNetwork: () => Promise<void>;
+  addToken: () => Promise<void>;
+}
+
+function chainParams() {
+  return {
+    chainId: "0x" + CONFIG.chainId.toString(16),
+    chainName: CONFIG.chainName,
+    nativeCurrency: { name: CONFIG.nativeCurrency, symbol: CONFIG.nativeCurrency, decimals: 18 },
+    rpcUrls: [CONFIG.rpc],
+    ...(CONFIG.explorerUrl ? { blockExplorerUrls: [CONFIG.explorerUrl] } : {}),
+  };
 }
 
 type WalletSnapshot =
@@ -70,21 +84,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         try {
           await window.ethereum.request?.({
             method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: hexId,
-                chainName: CONFIG.chainName,
-                nativeCurrency: {
-                  name: CONFIG.nativeCurrency,
-                  symbol: CONFIG.nativeCurrency,
-                  decimals: 18,
-                },
-                rpcUrls: [CONFIG.rpc],
-                ...(CONFIG.explorerUrl
-                  ? { blockExplorerUrls: [CONFIG.explorerUrl] }
-                  : {}),
-              },
-            ],
+            params: [chainParams()],
           });
         } catch (addErr) {
           setError(addErr instanceof Error ? addErr.message : "Failed to add network.");
@@ -92,6 +92,35 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       setError(e instanceof Error ? e.message : "Failed to switch network.");
+    }
+  }, []);
+
+  const addNetwork = useCallback(async () => {
+    if (!window.ethereum) return;
+    setError(null);
+    try {
+      await window.ethereum.request?.({
+        method: "wallet_addEthereumChain",
+        params: [chainParams()],
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to add network.");
+    }
+  }, []);
+
+  const addToken = useCallback(async () => {
+    if (!window.ethereum) return;
+    setError(null);
+    try {
+      await window.ethereum.request?.({
+        method: "wallet_watchAsset",
+        params: {
+          type: "ERC20",
+          options: { address: CONFIG.contractToken, symbol: getTokenSymbol(), decimals: 18 },
+        },
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to add token.");
     }
   }, []);
 
@@ -176,8 +205,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       connect,
       disconnect,
       switchChain,
+      addNetwork,
+      addToken,
     }),
-    [address, chainId, signer, connecting, error, connect, disconnect, switchChain]
+    [address, chainId, signer, connecting, error, connect, disconnect, switchChain, addNetwork, addToken]
   );
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;

@@ -4,14 +4,14 @@ export function StatCard({
   unit,
   hint,
   footer,
-  highlight = false,
+  tone = "default",
 }: {
   label: string;
   value: React.ReactNode;
   unit?: string;
   hint?: string;
   footer?: React.ReactNode;
-  highlight?: boolean;
+  tone?: "default" | "gold";
 }) {
   return (
     <div
@@ -21,10 +21,6 @@ export function StatCard({
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        // emphasised card (e.g. headline protocol stat)
-        ...(highlight
-          ? { background: "var(--hl-yellow-light)", borderColor: "var(--hl-yellow)" }
-          : null),
       }}
     >
       <div className="hl-label" style={{ marginBottom: "var(--hl-space-3)" }}>
@@ -32,14 +28,22 @@ export function StatCard({
       </div>
       <div
         className="hl-mono"
-        style={{ fontSize: 28, fontWeight: 600, lineHeight: 1.1, color: "var(--hl-navy)" }}
+        style={{
+          fontSize: 28,
+          fontWeight: 500,
+          lineHeight: 1.1,
+          letterSpacing: "-0.01em",
+          color: tone === "gold" ? "var(--hl-gold-bright)" : "var(--hl-navy)",
+        }}
       >
         {value}
       </div>
       {/* unit and hint sit on their own line below the value so the unit never
           wraps onto the number; aligned consistently across all cards */}
       {unit && (
-        <div style={{ fontSize: 14, color: "var(--hl-grey-text)", marginTop: 8 }}>{unit}</div>
+        <div className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)", marginTop: 8 }}>
+          {unit}
+        </div>
       )}
       {hint && (
         <div style={{ fontSize: 13, color: "var(--hl-grey-text)", marginTop: 8 }}>{hint}</div>

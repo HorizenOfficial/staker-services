@@ -93,8 +93,8 @@ export function ActionModal({
             <label className="hl-label" htmlFor="amt">Amount</label>
             <button
               type="button"
-              className="hl-label"
-              style={{ background: "none", border: 0, cursor: "pointer", color: "var(--hl-navy)", textDecoration: "underline" }}
+              className="hl-label hl-contract-link"
+              style={{ background: "none", border: 0, cursor: "pointer" }}
               onClick={() => setAmount(formatUnits(max, 18))}
             >
               {maxLabel}: {formatToken(max)} {symbol} · Max
@@ -130,7 +130,7 @@ export function ActionModal({
                 checked={claimRewards}
                 onChange={(e) => setClaimRewards(e.target.checked)}
                 disabled={busy}
-                style={{ accentColor: "var(--hl-yellow)" }}
+                style={{ accentColor: "var(--hl-gold)" }}
               />
               Claim pending rewards also (separate tx)
             </label>

@@ -7,3 +7,4 @@ frontend/next-env.d.ts
 frontend/.env*.local
 frontend/.env
 .claude/
+zen-staking-redesigned.html
