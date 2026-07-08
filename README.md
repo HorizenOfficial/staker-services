@@ -3,6 +3,7 @@
 This repo contains services to support the official Horizen Staking program.
 Based on the official staker contracts: https://github.com/HorizenLabs/staker 
 
+
 ## Repository content
 
 -   [frontend/](frontend/)
