@@ -447,14 +447,6 @@ h3 {
   gap: 10px;
   margin-bottom: var(--hl-space-5);
 }
-.hl-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--hl-yellow);
-  box-shadow: 0 0 8px var(--hl-yellow);
-  flex: none;
-}
 .hl-hero h1 {
   font-size: clamp(48px, 6.2vw, 76px);
   line-height: 1.04;
@@ -569,21 +561,6 @@ h1 em {
   text-decoration: underline;
 }
 
-/* ---- Status pill (header) ---- */
-.hl-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono), monospace;
-  font-size: 12.5px;
-  color: var(--hl-grey-text);
-  background: var(--hl-grey-light);
-  border: 1px solid var(--hl-grey);
-  border-radius: 999px;
-  padding: 9px 16px;
-  white-space: nowrap;
-}
-
 /* ---- Unified stat band (protocol headline numbers) ---- */
 .hl-stat-band {
   display: grid;
@@ -591,7 +568,6 @@ h1 em {
   background: rgba(14, 23, 40, 0.6);
   border: 1px solid var(--hl-grey);
   border-radius: var(--hl-radius);
-  overflow: hidden;
 }
 .hl-stat-cell {
   padding: 26px 28px;
@@ -631,6 +607,58 @@ h1 em {
   cursor: help;
   letter-spacing: 0;
   text-transform: none;
+}
+.hl-tooltip {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+.hl-tooltip:focus-visible {
+  outline: none;
+}
+.hl-tooltip:focus-visible .hl-info {
+  border-color: var(--hl-yellow);
+  color: var(--hl-yellow);
+}
+.hl-tooltip-bubble {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: max-content;
+  max-width: 240px;
+  background: var(--hl-panel-2);
+  border: 1px solid var(--hl-grey);
+  border-radius: var(--hl-radius-sm);
+  padding: 10px 12px;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--hl-navy);
+  box-shadow: 0 16px 32px rgba(3, 8, 18, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--hl-transition-fast), transform var(--hl-transition-fast);
+  z-index: 20;
+}
+.hl-tooltip-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--hl-panel-2);
+}
+.hl-tooltip:hover .hl-tooltip-bubble,
+.hl-tooltip:focus-within .hl-tooltip-bubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ---- Card title (display, matches page h1 treatment) ---- */

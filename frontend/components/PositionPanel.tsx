@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { formatUnits, parseEther } from "ethers";
 import { useWallet } from "@/lib/wallet";
 import { useStake } from "@/lib/useStake";
@@ -165,7 +165,7 @@ function StakePanel({
   onDone: () => void;
 }) {
   const { address } = useWallet();
-  const { status, error, depositId, totalSteps, stake, reset } = useStake();
+  const { status, error, totalSteps, stake, reset } = useStake();
   const { add: learnDeposit } = useLearnedDeposits();
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState<bigint | null>(null);
@@ -186,16 +186,6 @@ function StakePanel({
 
   usePolling(loadBalance, BALANCE_POLL_MS);
 
-  useEffect(() => {
-    if (status === "success") {
-      if (depositId != null && address) learnDeposit(address, depositId);
-      setAmount("");
-      reset();
-      onDone();
-      loadBalance();
-    }
-  }, [status, depositId, address, learnDeposit, onDone, reset, loadBalance]);
-
   const step = stakeStepInfo(status, totalSteps);
   const busy = step !== null;
 
@@ -211,9 +201,17 @@ function StakePanel({
   }
   const canSubmit = !!address && !!amount && !amountError && !busy;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (canSubmit) stake(amount, position?.depositId ?? null);
+    if (!canSubmit) return;
+    const outcome = await stake(amount, position?.depositId ?? null);
+    if (outcome.ok) {
+      if (outcome.depositId != null && address) learnDeposit(address, outcome.depositId);
+      setAmount("");
+      reset();
+      onDone();
+      loadBalance();
+    }
   };
 
   return (

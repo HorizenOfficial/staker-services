@@ -7,7 +7,6 @@ import { useWallet } from "@/lib/wallet";
 import { truncateAddress } from "@/lib/format";
 
 import { CONFIG } from "@/lib/config";
-import { Logo } from "./Logo";
 
 // The home page is the "Stake" tab (stake/withdraw/claim live inline there,
 // no separate /stake page). "My Deposits" only exists in the multi-deposit
@@ -35,9 +34,9 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="hl-mono"
       onClick={onNavigate}
       style={{
+        fontFamily: "var(--font-display), sans-serif",
         fontWeight: 400,
         fontSize: block ? 14 : 12.5,
         letterSpacing: "0.06em",
@@ -51,15 +50,6 @@ function NavLink({
     >
       {label}
     </Link>
-  );
-}
-
-function NetworkPill() {
-  return (
-    <span className="hl-pill">
-      <span className="hl-dot" aria-hidden="true" />
-      {CONFIG.chainName}
-    </span>
   );
 }
 
@@ -125,27 +115,26 @@ export function Header() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "var(--hl-space-3)",
+            gap: 6,
             color: "var(--hl-navy)",
             textDecoration: "none",
           }}
         >
-          <Logo />
+          {/* eslint-disable-next-line @next/next/no-img-element -- static export, no image optimizer */}
+          <img src="/Horizen2.0-logo_primary-white.svg" alt="Horizen" height={26} style={{ display: "block" }} />
           <span
-            className="hl-mono hl-brand-label"
+            className="hl-brand-label"
             style={{
-              fontWeight: 700,
+              fontFamily: "var(--font-display), sans-serif",
+              fontWeight: 500,
               fontSize: 15,
-              letterSpacing: "0.22em",
+              letterSpacing: "0.06em",
               textTransform: "uppercase",
-              color: "var(--hl-navy)",
+              color: "var(--hl-yellow)",
               whiteSpace: "nowrap",
             }}
           >
-            HORIZEN{" "}
-            <span style={{ fontWeight: 400, color: "var(--hl-yellow)", letterSpacing: "0.08em", textTransform: "lowercase" }}>
-              / staking
-            </span>
+            / STAKING
           </span>
         </Link>
         <nav className="hl-nav-desktop" aria-label="Primary">
@@ -156,7 +145,6 @@ export function Header() {
       </div>
 
       <div className="hl-wallet-desktop">
-        <NetworkPill />
         <WalletControls />
       </div>
 
@@ -209,7 +197,6 @@ export function Header() {
             borderTop: "1px solid var(--hl-grey)",
           }}
         >
-          <NetworkPill />
           <WalletControls />
         </div>
       </div>

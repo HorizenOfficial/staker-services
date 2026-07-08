@@ -21,6 +21,7 @@ import { StatCard } from "./StatCard";
 import { StakeDialog } from "./StakeDialog";
 import { PositionPanel } from "./PositionPanel";
 import { RewardSourcesCard } from "./RewardSourcesCard";
+import { InfoTooltip } from "./InfoTooltip";
 
 // An address rendered in the shared blue reference-link style, linked to its
 // block-explorer page. Falls back to plain text when no explorer is configured.
@@ -117,7 +118,7 @@ export function Dashboard() {
             Earn on <em>Horizen</em>.
           </h1>
           <p style={{ color: "var(--hl-grey-text)", fontSize: 16.5, maxWidth: "52ch", marginBottom: "var(--hl-space-6)" }}>
-            Zen staking is the hub for participation in the {symbol} token economy - with a single
+            ZEN staking is the hub for participation in the {symbol} token economy - with a single
             staking pool that <strong>earns rewards from multiple, independent sources</strong> tied
             to the real ecosystem activity.
           </p>
@@ -210,12 +211,7 @@ export function Dashboard() {
           <div className="hl-stat-cell">
             <span className="hl-label">
               Annual rewards rate{" "}
-              <span
-                className="hl-info"
-                title="Annualized from the current on-chain reward rate, across all reward sources. Varies with pool size and source activity — not a guaranteed yield."
-              >
-                i
-              </span>
+              <InfoTooltip text="ZEN is not a security. Rewards and rewards rate are not guaranteed, and stakers should have no expectation of profit. The ZEN staking program is subject to additional Terms & Conditions." />
             </span>
             <div className="hl-stat-value gold">
               {global ? formatPct(estimateApr(dailyRate(global.rewardRate), global.totalStaked)) : "…"}
@@ -225,9 +221,7 @@ export function Dashboard() {
           <div className="hl-stat-cell">
             <span className="hl-label">
               Daily rewards{" "}
-              <span className="hl-info" title="ZEN distributed to the pool per day at the current on-chain reward rate, across all sources.">
-                i
-              </span>
+              <InfoTooltip text="ZEN is not a security. Rewards and rewards rate are not guaranteed, and stakers should have no expectation of profit. The ZEN staking program is subject to additional Terms & Conditions." />
             </span>
             <div className="hl-stat-value gold">{global ? formatToken(dailyRate(global.rewardRate), 6) : "…"}</div>
             <span className="hl-stat-unit">{symbol} / day</span>
@@ -257,7 +251,7 @@ export function Dashboard() {
             </button>
           </div>
         </>
-      ) : CONFIG.singlePosition ? (
+      ) : CONFIG.singlePosition && deposits.length <= 1 ? (
         <PositionPanel
           symbol={symbol}
           address={address}

@@ -20,6 +20,10 @@ export interface DepositsState {
   loading: boolean;
   error: string | null; // set only on a hard failure (no data to show)
   subgraphDown: boolean;
+  // True once the first load attempt (for the current address) has settled —
+  // lets callers wait for a real deposit count before deciding anything
+  // (e.g. whether to redirect away from a multi-deposit view).
+  hasLoadedOnce: boolean;
   reload: () => Promise<void>;
 }
 
@@ -31,6 +35,7 @@ export function useDeposits(address: string | null): DepositsState {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subgraphDown, setSubgraphDown] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   // Deposit IDs learned from stake receipts this session (fresh before indexing).
   const learnedIds = useMemo(
@@ -41,6 +46,7 @@ export function useDeposits(address: string | null): DepositsState {
   const load = useCallback(async () => {
     if (!address) {
       setDeposits([]);
+      setHasLoadedOnce(true);
       return;
     }
     setLoading(true);
@@ -92,10 +98,11 @@ export function useDeposits(address: string | null): DepositsState {
       setError(e instanceof Error ? e.message : "Failed to load deposits.");
     } finally {
       setLoading(false);
+      setHasLoadedOnce(true);
     }
   }, [address, learnedIds]);
 
   usePolling(load, POLL_MS, !!address);
 
-  return { deposits, loading, error, subgraphDown, reload: load };
+  return { deposits, loading, error, subgraphDown, hasLoadedOnce, reload: load };
 }

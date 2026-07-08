@@ -110,7 +110,7 @@ export function HowItWorks() {
 
       <div className="hl-card">
         <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
-          <b>Zen staking on Horizen is fully on-chain and non-custodial.</b> Your {symbol} is locked only
+          <b>ZEN staking on Horizen is fully on-chain and non-custodial.</b> Your {symbol} is locked only
           inside the public staking contract - no intermediary ever takes custody -
           and every balance, reward and transaction is verifiable on the block explorer.
         </p>

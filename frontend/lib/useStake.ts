@@ -17,6 +17,12 @@ export type StakeStatus =
   | "success"
   | "error";
 
+// Resolved by `stake()` so the caller can run its own post-success side
+// effects (learn the deposit id, refresh balances, close a dialog…) right
+// where the submit happened, instead of reacting to a status change via a
+// separate effect.
+export type StakeOutcome = { ok: true; depositId: bigint | null } | { ok: false };
+
 interface StakeResult {
   status: StakeStatus;
   txHash: string | null;
@@ -28,7 +34,7 @@ interface StakeResult {
   totalSteps: number;
   // Create a new deposit, or — when existingDepositId is given — add to it via
   // stakeMore. Both paths approve the token if needed, then stake.
-  stake: (amount: string, existingDepositId?: bigint | null) => Promise<void>;
+  stake: (amount: string, existingDepositId?: bigint | null) => Promise<StakeOutcome>;
   reset: () => void;
 }
 
@@ -62,11 +68,11 @@ export function useStake(): StakeResult {
   }, []);
 
   const stake = useCallback(
-    async (amountStr: string, existingDepositId?: bigint | null) => {
+    async (amountStr: string, existingDepositId?: bigint | null): Promise<StakeOutcome> => {
       if (!signer || !address) {
         setError("Connect your wallet first.");
         setStatus("error");
-        return;
+        return { ok: false };
       }
       setError(null);
       setDepositId(null);
@@ -99,7 +105,7 @@ export function useStake(): StakeResult {
           await tx.wait();
           setDepositId(existingDepositId);
           setStatus("success");
-          return;
+          return { ok: true, depositId: existingDepositId };
         }
 
         const stakerWrite = staker as Contract;
@@ -107,11 +113,14 @@ export function useStake(): StakeResult {
         setTxHash(tx.hash);
         setStatus("stake-pending");
         const receipt = await tx.wait();
-        setDepositId(parseDepositId(receipt?.logs ?? []));
+        const newDepositId = parseDepositId(receipt?.logs ?? []);
+        setDepositId(newDepositId);
         setStatus("success");
+        return { ok: true, depositId: newDepositId };
       } catch (e) {
         setError(decodeStakeError(e));
         setStatus("error");
+        return { ok: false };
       }
     },
     [signer, address]
