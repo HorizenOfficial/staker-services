@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Inter, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import { WalletProvider } from "@/lib/wallet";
 import { LearnedDepositsProvider } from "@/lib/learnedDeposits";
 import { Header } from "@/components/Header";
@@ -7,10 +7,9 @@ import { TestnetBanner } from "@/components/TestnetBanner";
 import { SubgraphHealthBanner } from "@/components/SubgraphHealthBanner";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-display",
 });
 const inter = Inter({
@@ -18,9 +17,9 @@ const inter = Inter({
   weight: ["400", "500", "600"],
   variable: "--font-sans",
 });
-const jetbrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500"],
   variable: "--font-mono",
 });
 
@@ -36,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable}`}>
         <WalletProvider>
           <LearnedDepositsProvider>
             <Header />

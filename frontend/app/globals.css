@@ -91,17 +91,10 @@ h2,
 h3 {
   color: var(--hl-navy);
   margin: 0;
-}
-
-h1 {
-  font-family: var(--font-display), serif;
-  font-weight: 400;
-}
-
-h2,
-h3 {
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-weight: 700;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
 }
 
 .hl-mono {
@@ -640,12 +633,12 @@ h1 em {
   text-transform: none;
 }
 
-/* ---- Card title (serif, matches page h1 treatment) ---- */
+/* ---- Card title (display, matches page h1 treatment) ---- */
 .hl-card-title {
-  font-family: var(--font-display), serif;
-  font-weight: 400;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
   font-size: 30px;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
 }
 .hl-addr-pill {
   font-family: var(--font-mono), monospace;
