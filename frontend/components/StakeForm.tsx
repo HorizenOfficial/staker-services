@@ -10,6 +10,9 @@ import { getReadContracts } from "@/lib/contracts";
 import { CONFIG } from "@/lib/config";
 import { formatToken } from "@/lib/format";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
+import { usePolling } from "@/lib/usePolling";
+
+const BALANCE_POLL_MS = 10_000;
 
 // Maps each in-progress phase to its step number + label. The stake steps shift
 // from 3/4 & 4/4 (approval required) down to 1/2 & 2/2 when the allowance
@@ -49,32 +52,29 @@ export function StakeForm({ onSuccess, onCancel }: { onSuccess?: () => void; onC
   const [balance, setBalance] = useState<bigint | null>(null);
   const symbol = useTokenSymbol();
 
-  const loadBalance = useCallback(async (): Promise<bigint | null> => {
-    if (!address) return null;
+  const loadBalance = useCallback(async () => {
+    if (!address) {
+      setBalance(null);
+      return;
+    }
     try {
       const { token } = getReadContracts();
-      return (await token.balanceOf(address)) as bigint;
+      const b = (await token.balanceOf(address)) as bigint;
+      setBalance(b);
     } catch {
-      return null;
+      // keep the last known balance on a transient read failure
     }
   }, [address]);
 
-  useEffect(() => {
-    let active = true;
-    loadBalance().then((b) => {
-      if (active && b !== null) setBalance(b);
-    });
-    return () => {
-      active = false;
-    };
-  }, [loadBalance]);
+  usePolling(loadBalance, BALANCE_POLL_MS);
 
   useEffect(() => {
     if (status === "success") {
       if (depositId != null && address) learnDeposit(address, depositId);
+      loadBalance();
       onSuccess?.();
     }
-  }, [status, depositId, address, learnDeposit, onSuccess]);
+  }, [status, depositId, address, learnDeposit, loadBalance, onSuccess]);
 
   const step = stepInfo(status, totalSteps);
   const busy = step !== null;

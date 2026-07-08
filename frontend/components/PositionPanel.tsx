@@ -9,6 +9,9 @@ import { useLearnedDeposits } from "@/lib/learnedDeposits";
 import { getReadContracts } from "@/lib/contracts";
 import { formatToken, truncateAddress } from "@/lib/format";
 import type { DepositDetail } from "@/lib/useDeposits";
+import { usePolling } from "@/lib/usePolling";
+
+const BALANCE_POLL_MS = 10_000;
 
 type Tab = "stake" | "withdraw" | "claim";
 
@@ -167,25 +170,21 @@ function StakePanel({
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState<bigint | null>(null);
 
-  const loadBalance = useCallback(async (): Promise<bigint | null> => {
-    if (!address) return null;
+  const loadBalance = useCallback(async () => {
+    if (!address) {
+      setBalance(null);
+      return;
+    }
     try {
       const { token } = getReadContracts();
-      return (await token.balanceOf(address)) as bigint;
+      const b = (await token.balanceOf(address)) as bigint;
+      setBalance(b);
     } catch {
-      return null;
+      // keep the last known balance on a transient read failure
     }
   }, [address]);
 
-  useEffect(() => {
-    let on = true;
-    loadBalance().then((b) => {
-      if (on && b !== null) setBalance(b);
-    });
-    return () => {
-      on = false;
-    };
-  }, [loadBalance]);
+  usePolling(loadBalance, BALANCE_POLL_MS);
 
   useEffect(() => {
     if (status === "success") {
@@ -193,9 +192,7 @@ function StakePanel({
       setAmount("");
       reset();
       onDone();
-      loadBalance().then((b) => {
-        if (b !== null) setBalance(b);
-      });
+      loadBalance();
     }
   }, [status, depositId, address, learnDeposit, onDone, reset, loadBalance]);
 
