@@ -8,7 +8,7 @@ import { usePolling } from "./usePolling";
 const POLL_MS = 20_000;
 // Normal graph-node lag on a 2s-block devnet is a couple of blocks; flag only
 // a meaningful gap to avoid false positives.
-const BEHIND_THRESHOLD = 30;
+const BEHIND_THRESHOLD = 100;
 
 export type SubgraphHealth =
   | { status: "checking" }
