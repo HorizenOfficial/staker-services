@@ -48,6 +48,8 @@ export function DepositsTable() {
 
   const totalUnclaimed = deposits.reduce((a, d) => a + d.unclaimedRewards, 0n);
   const hasClaimable = totalUnclaimed > 0n;
+  const totalStaked = deposits.reduce((a, d) => a + d.balance, 0n);
+  const hasWithdrawable = totalStaked > 0n;
 
   const stepLabel = actionStepLabel(actions.state);
 
@@ -75,18 +77,31 @@ export function DepositsTable() {
             {CONFIG.singlePosition ? "Manage your staking position." : "Manage your staking positions."}
           </p>
         </div>
-        {/* Claim All only in the multi-deposit table; the single-position card has its own Claim. */}
+        {/* Claim All / Withdraw All only in the multi-deposit table; the
+            single-position card has its own Claim / Withdraw. */}
         {!singleView && (
-          <button
-            className="hl-btn hl-btn-primary hl-btn-sm"
-            disabled={!hasClaimable || actions.busy}
-            onClick={async () => {
-              const ok = await actions.claimAll(deposits);
-              if (ok) afterAction();
-            }}
-          >
-            {actions.state.kind === "claimAll" ? "Claiming…" : `Claim All${hasClaimable ? ` (${formatToken(totalUnclaimed)})` : ""}`}
-          </button>
+          <div style={{ display: "flex", gap: "var(--hl-space-3)" }}>
+            <button
+              className="hl-btn hl-btn-ghost hl-btn-sm"
+              disabled={!hasWithdrawable || actions.busy}
+              onClick={async () => {
+                const ok = await actions.withdrawAll(deposits, false);
+                if (ok) afterAction();
+              }}
+            >
+              {actions.state.kind === "withdrawAll" ? "Withdrawing…" : `Withdraw All${hasWithdrawable ? ` (${formatToken(totalStaked)})` : ""}`}
+            </button>
+            <button
+              className="hl-btn hl-btn-primary hl-btn-sm"
+              disabled={!hasClaimable || actions.busy}
+              onClick={async () => {
+                const ok = await actions.claimAll(deposits);
+                if (ok) afterAction();
+              }}
+            >
+              {actions.state.kind === "claimAll" ? "Claiming…" : `Claim All${hasClaimable ? ` (${formatToken(totalUnclaimed)})` : ""}`}
+            </button>
+          </div>
         )}
       </div>
 

@@ -48,6 +48,7 @@ export function PositionPanel({
   symbol,
   address,
   position,
+  deposits,
   stakedBalance,
   liveUnclaimed,
   onRefresh,
@@ -55,6 +56,10 @@ export function PositionPanel({
   symbol: string;
   address: string;
   position: DepositDetail | null;
+  // Every deposit the wallet holds. Normally just [position] (or empty), but
+  // staking directly against the contract (bypassing stakeMore) can leave
+  // more than one — Withdraw/Claim act across all of them.
+  deposits: DepositDetail[];
   // Total staked from getDepositorSummary — a pure on-chain aggregate that
   // needs no deposit-ID lookup, so it stays correct even when the subgraph
   // (and the learned-deposits cache) hasn't caught up with a just-created
@@ -145,10 +150,12 @@ export function PositionPanel({
       </div>
 
       <div style={{ marginTop: "var(--hl-space-6)" }}>
-        {tab === "stake" && <StakePanel symbol={symbol} position={position} onDone={onRefresh} />}
-        {tab === "withdraw" && <WithdrawPanel symbol={symbol} position={position} onDone={onRefresh} />}
+        {tab === "stake" && (
+          <StakePanel symbol={symbol} position={position} stakedBalance={stakedBalance} onDone={onRefresh} />
+        )}
+        {tab === "withdraw" && <WithdrawPanel symbol={symbol} deposits={deposits} onDone={onRefresh} />}
         {tab === "claim" && (
-          <ClaimPanel symbol={symbol} position={position} unclaimedDisplay={unclaimedDisplay} onDone={onRefresh} />
+          <ClaimPanel symbol={symbol} deposits={deposits} unclaimedDisplay={unclaimedDisplay} onDone={onRefresh} />
         )}
       </div>
     </div>
@@ -158,10 +165,17 @@ export function PositionPanel({
 function StakePanel({
   symbol,
   position,
+  stakedBalance,
   onDone,
 }: {
   symbol: string;
   position: DepositDetail | null;
+  // Chain aggregate (getDepositorSummary) — always correct, unlike `position`
+  // which depends on the subgraph/learned-deposits cache having caught up
+  // with the deposit id. Used to detect that mismatch: if this shows an
+  // existing stake but `position` is still null, we don't yet know the
+  // deposit id and must not fall through to creating a second deposit.
+  stakedBalance: bigint | null;
   onDone: () => void;
 }) {
   const { address } = useWallet();
@@ -189,6 +203,15 @@ function StakePanel({
   const step = stakeStepInfo(status, totalSteps);
   const busy = step !== null;
 
+  // Single-position rule: once the user has a stake, every stake action must
+  // be stakeMore, never a fresh stake — except the very first one. `position`
+  // (subgraph/learned-cache derived) is what supplies the deposit id needed
+  // for stakeMore; `stakedBalance` (chain aggregate) is what's always right
+  // about whether a stake already exists. When they disagree — stake > 0 but
+  // no resolved deposit id yet — block submission instead of defaulting to
+  // "create a new deposit", which would silently open a second position.
+  const resolvingExisting = (stakedBalance ?? 0n) > 0n && !position;
+
   let amountError: string | null = null;
   if (amount) {
     try {
@@ -199,7 +222,7 @@ function StakePanel({
       amountError = "Invalid amount.";
     }
   }
-  const canSubmit = !!address && !!amount && !amountError && !busy;
+  const canSubmit = !!address && !!amount && !amountError && !busy && !resolvingExisting;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -243,12 +266,17 @@ function StakePanel({
       {amountError && <p style={{ color: "var(--hl-error)", fontSize: 13, marginTop: 8 }}>{amountError}</p>}
 
       <button type="submit" className="hl-btn hl-btn-primary" style={{ width: "100%", marginTop: "var(--hl-space-5)" }} disabled={!canSubmit}>
-        {busy ? "Processing…" : position ? "Add to Stake" : "Stake " + symbol}
+        {busy ? "Processing…" : position || resolvingExisting ? "Add to Stake" : "Stake " + symbol}
       </button>
       <p style={{ fontSize: 12.5, color: "var(--hl-grey-text)", textAlign: "center", marginTop: "var(--hl-space-4)" }}>
         Rewards accrue continuously and never expire.
       </p>
 
+      {resolvingExisting && !step && (
+        <div className="hl-alert hl-alert-warning" style={{ marginTop: "var(--hl-space-5)" }}>
+          Resolving your existing deposit, please wait…
+        </div>
+      )}
       {step && (
         <div className="hl-alert hl-alert-warning" style={{ marginTop: "var(--hl-space-5)" }}>
           Step {step.n}/{totalSteps}: {step.label}…
@@ -265,17 +293,22 @@ function StakePanel({
 
 function WithdrawPanel({
   symbol,
-  position,
+  deposits,
   onDone,
 }: {
   symbol: string;
-  position: DepositDetail | null;
+  deposits: DepositDetail[];
   onDone: () => void;
 }) {
   const actions = useDepositActions();
   const [amount, setAmount] = useState("");
-  const [claimRewards, setClaimRewards] = useState((position?.unclaimedRewards ?? 0n) > 0n);
-  const max = position?.balance ?? 0n;
+  const [claimRewards, setClaimRewards] = useState(deposits.some((d) => d.unclaimedRewards > 0n));
+  const hasPosition = deposits.length > 0;
+  // Aggregate cap across every deposit. When more than one deposit exists
+  // (e.g. staked directly on the contract, bypassing stakeMore), the amount
+  // entered here isn't tied to a single deposit — it's drained starting from
+  // the largest one, cascading into the next largest as needed.
+  const max = deposits.reduce((a, d) => a + d.balance, 0n);
   const stepLabel = actionStepLabel(actions.state);
 
   let amountError: string | null = null;
@@ -288,12 +321,12 @@ function WithdrawPanel({
       amountError = "Invalid amount.";
     }
   }
-  const canSubmit = !!position && !!amount && !amountError && !actions.busy;
+  const canSubmit = hasPosition && !!amount && !amountError && !actions.busy;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit || !position) return;
-    const ok = await actions.withdraw(position.depositId, parseEther(amount), claimRewards);
+    if (!canSubmit) return;
+    const ok = await actions.withdrawAmount(deposits, parseEther(amount), claimRewards);
     if (ok) {
       setAmount("");
       onDone();
@@ -309,21 +342,21 @@ function WithdrawPanel({
           aria-label={`Amount of ${symbol} to withdraw`}
           value={amount}
           onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
-          disabled={actions.busy || !position}
+          disabled={actions.busy || !hasPosition}
           autoFocus
         />
         <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "none" }}>
           <span className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)", whiteSpace: "nowrap" }}>
             Staked {formatToken(max)} {symbol}
           </span>
-          <button type="button" className="hl-max-btn" onClick={() => setAmount(formatUnits(max, 18))} disabled={!position}>
+          <button type="button" className="hl-max-btn" onClick={() => setAmount(formatUnits(max, 18))} disabled={!hasPosition}>
             MAX
           </button>
         </div>
       </div>
       {amountError && <p style={{ color: "var(--hl-error)", fontSize: 13, marginTop: 8 }}>{amountError}</p>}
 
-      {position && position.unclaimedRewards > 0n && (
+      {deposits.some((d) => d.unclaimedRewards > 0n) && (
         <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "var(--hl-space-4)", fontSize: 14, color: "var(--hl-grey-text)" }}>
           <input
             type="checkbox"
@@ -359,22 +392,21 @@ function WithdrawPanel({
 
 function ClaimPanel({
   symbol,
-  position,
+  deposits,
   unclaimedDisplay,
   onDone,
 }: {
   symbol: string;
-  position: DepositDetail | null;
+  deposits: DepositDetail[];
   unclaimedDisplay: bigint | null;
   onDone: () => void;
 }) {
   const actions = useDepositActions();
   const stepLabel = actionStepLabel(actions.state);
-  const canClaim = !!position && !actions.busy && (position?.unclaimedRewards ?? 0n) > 0n;
+  const canClaim = !actions.busy && deposits.some((d) => d.unclaimedRewards > 0n);
 
   const onClaim = async () => {
-    if (!position) return;
-    const ok = await actions.claim(position.depositId);
+    const ok = await actions.claimAll(deposits);
     if (ok) onDone();
   };
 

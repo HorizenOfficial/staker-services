@@ -251,11 +251,12 @@ export function Dashboard() {
             </button>
           </div>
         </>
-      ) : CONFIG.singlePosition && deposits.length <= 1 ? (
+      ) : CONFIG.singlePosition ? (
         <PositionPanel
           symbol={symbol}
           address={address}
           position={position}
+          deposits={deposits}
           stakedBalance={user?.totalStaked ?? null}
           liveUnclaimed={liveUnclaimed}
           onRefresh={refresh}
