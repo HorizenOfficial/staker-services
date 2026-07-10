@@ -59,4 +59,17 @@ export const CONFIG = {
   // Leave blank to disable the price fetch entirely, e.g. when the deployed
   // token isn't real ZEN (a devnet mock).
   coingeckoId: process.env.NEXT_PUBLIC_COINGECKO_ID ?? "zencash",
+  // Block gap above which the subgraph is considered behind the chain head
+  // (useSubgraphHealth). A couple of blocks of lag is normal; only flag a
+  // meaningful gap to avoid false positives.
+  behindThreshold: Number(process.env.NEXT_PUBLIC_BEHIND_THRESHOLD ?? "30"),
+  // Consecutive over-threshold checks required before surfacing the "stale"
+  // banner — absorbs transient lag instead of flashing the banner on a single
+  // slow poll.
+  behindThresholdAttempt: Number(process.env.NEXT_PUBLIC_BEHIND_THRESHOLD_ATTEMPT ?? "4"),
+  // Seconds between subgraph health checks (also the retry cadence while
+  // over-threshold and not yet at behindThresholdAttempt).
+  behindThresholdAttemptInterval: Number(
+    process.env.NEXT_PUBLIC_BEHIND_THRESHOLD_ATTEMPT_INTERVAL ?? "30"
+  ),
 } as const;
