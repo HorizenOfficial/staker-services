@@ -1,7 +1,7 @@
 # Horizen Staking Services
 
 This repo contains services to support the official Horizen Staking program.
-Based on the official staker contracts: https://github.com/HorizenLabs/staker 
+Based on the official staker contracts: https://github.com/HorizenOfficial/staker
 
 
 ## Repository content
@@ -13,11 +13,11 @@ Based on the official staker contracts: https://github.com/HorizenLabs/staker
     Users are identified via MetaMask connection<br/>
 
     The frontend reads indexed/historical data from the ZenStaker subgraph
-    (see `https://github.com/HorizenLabs/staker/subgraphs/`) and live data (unclaimed rewards, global state)
+    (see https://github.com/HorizenOfficial/staker/tree/dev/subgraphs) and live data (unclaimed rewards, global state)
     plus all write transactions directly from the chain via ethers v6.
     No custom backend service is used.
 
-See [claude.md](claude.md) for further info.
+See [CLAUDE.md](CLAUDE.md) for further info.
 
 ## Local development
 
@@ -57,7 +57,7 @@ previews. The "testnet environment" banner shows automatically whenever
 |---|---|---|
 | `RPC` | JSON-RPC endpoint — **public HTTPS, CORS-enabled** | `https://rpc.example.com` |
 | `CHAIN_ID` | Target chain id (`26514` = ZEN mainnet) | `26514` |
-| `CONTRACT_STAKER` | Staker contract address (ERC1967 proxy) | `0x…` |
+| `CONTRACT_STAKER` | Staker contract address | `0x…` |
 | `CONTRACT_TOKEN` | ZEN token (ERC-20) address | `0x…` |
 | `SUBGRAPH` | Public subgraph GraphQL endpoint | `https://…/subgraphs/name/zen-staker` |
 | `EXPLORER_URL` | Block-explorer base URL (for tx/address links) | `https://explorer.example.com` |
@@ -75,5 +75,14 @@ Cloudflare deploys one **production branch** (the dApp's main domain +
 `*.pages.dev`); every other branch pushed to GitHub gets its own **preview**
 URL. The production branch is configurable any time under
 *Settings → Builds → Branch control*.
+
+## Security
+
+Please do not report security vulnerabilities through public GitHub issues —
+see [SECURITY.md](SECURITY.md).
+
+## License
+
+[MIT](LICENSE)
 
 

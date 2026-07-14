@@ -4,7 +4,7 @@ import { CONFIG } from "@/lib/config";
 import { addressUrl, tokenUrl, truncateAddress } from "@/lib/format";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
 
-const CONTRACTS_SOURCE_URL = "https://github.com/HorizenLabs/staker";
+const CONTRACTS_SOURCE_URL = "https://github.com/HorizenOfficial/staker";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
