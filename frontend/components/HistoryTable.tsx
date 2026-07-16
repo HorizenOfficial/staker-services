@@ -47,7 +47,7 @@ const th: React.CSSProperties = {
   padding: "var(--hl-space-5)",
   borderBottom: "2px solid var(--hl-sunrise)",
 };
-const td: React.CSSProperties = { padding: "var(--hl-space-5)", fontSize: 14 };
+const td: React.CSSProperties = { padding: "var(--hl-space-5)", fontSize: 14.5, fontWeight: 600, color: "var(--hl-navy)" };
 
 function Empty({ children }: { children: React.ReactNode }) {
   return (
@@ -109,10 +109,10 @@ export function HistoryTable() {
                 {items.map((it) => (
                   <tr key={`${it.txHash}-${it.type}-${it.depositId}`} style={{ borderTop: "1px solid var(--hl-grey)" }}>
                     <td data-label="Type" style={td}><TypeBadge type={it.type} /></td>
-                    <td data-label="Amount" className="hl-mono" style={{ ...td, textAlign: "right" }}>
+                    <td data-label="Amount" style={{ ...td, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
                       {formatToken(it.amount, 8)} {symbol}
                     </td>
-                    <td data-label="Date" style={{ ...td, color: "var(--hl-grey-text)" }}>
+                    <td data-label="Date" style={{ ...td, color: "var(--hl-grey-text)", fontWeight: 400, fontSize: 14 }}>
                       {new Date(it.timestamp * 1000).toLocaleString()}
                     </td>
                     <td data-label="Tx" style={td}>

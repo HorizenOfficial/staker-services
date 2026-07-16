@@ -84,23 +84,19 @@ export function PositionPanel({
           <div className="hl-label" style={{ marginBottom: 12 }}>
             Staked
           </div>
-          <div className="hl-mono" style={{ fontSize: 24, fontWeight: 500 }}>
+          <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1, marginBottom: 6, color: "var(--hl-navy-hover)" }}>
             {formatToken(stakedBalance ?? position?.balance ?? 0n)}
           </div>
-          <span className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)" }}>
-            {symbol}
-          </span>
+          <span style={{ fontSize: 12.5, fontWeight: 500, color: "var(--hl-grey-text)" }}>{symbol}</span>
         </div>
         <div style={posStat}>
           <div className="hl-label" style={{ marginBottom: 12 }}>
             Unclaimed rewards
           </div>
-          <div className="hl-mono" style={{ fontSize: 24, fontWeight: 500, color: "var(--hl-gold-bright)" }}>
+          <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1, marginBottom: 6, color: "var(--hl-gold-bright)" }}>
             {unclaimedDisplay !== null ? formatToken(unclaimedDisplay, 6) : "—"}
           </div>
-          <span className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)" }}>
-            {symbol}
-          </span>
+          <span style={{ fontSize: 12.5, fontWeight: 500, color: "var(--hl-grey-text)" }}>{symbol}</span>
         </div>
       </div>
 
@@ -239,7 +235,7 @@ function StakePanel({
         />
         <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "none" }}>
           {balance !== null && (
-            <span className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: 12.5, fontWeight: 500, color: "var(--hl-grey-text)", whiteSpace: "nowrap" }}>
               Wallet {formatToken(balance)} {symbol}
             </span>
           )}
@@ -331,7 +327,7 @@ function WithdrawPanel({
           autoFocus
         />
         <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "none" }}>
-          <span className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)", whiteSpace: "nowrap" }}>
+          <span style={{ fontSize: 12.5, fontWeight: 500, color: "var(--hl-grey-text)", whiteSpace: "nowrap" }}>
             Staked {formatToken(max)} {symbol}
           </span>
           <button type="button" className="hl-max-btn" onClick={() => setAmount(formatUnits(max, 18))} disabled={!hasPosition}>
@@ -402,7 +398,7 @@ function ClaimPanel({
           Rewards ready to claim
         </div>
         <div className="hl-claim-amount">{unclaimedDisplay !== null ? formatToken(unclaimedDisplay, 6) : "—"}</div>
-        <span className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)", display: "block", marginTop: 8 }}>
+        <span style={{ fontSize: 12.5, fontWeight: 500, color: "var(--hl-grey-text)", display: "block", marginTop: 8 }}>
           {symbol}
         </span>
       </div>
