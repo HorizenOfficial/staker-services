@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { useWallet } from "@/lib/wallet";
 import { useGlobalState, useUserSummary, useLiveReward } from "@/lib/useDashboard";
 import { useDeposits } from "@/lib/useDeposits";
+import { useOnboardingStatus } from "@/lib/useOnboardingStatus";
 import {
   addressUrl,
   dailyRate,
@@ -97,6 +98,11 @@ export function Dashboard() {
   // Single-position: one deposit drives Withdraw/Claim.
   const position = CONFIG.singlePosition ? deposits[0] ?? null : null;
 
+  // Onboarding checklist: each step reads as done once the wallet has
+  // demonstrably taken it (holds ETH / holds ZEN / has ZEN staked).
+  const { hasEth, hasZen } = useOnboardingStatus(active);
+  const hasStaked = (user?.totalStaked ?? 0n) > 0n;
+
   const liveUnclaimed = useLiveReward(
     user?.totalUnclaimed ?? null,
     global?.rewardRate ?? 0n,
@@ -149,7 +155,7 @@ export function Dashboard() {
             </button>
           </div>
           <ol className="hl-steps">
-            <li>
+            <li className={hasEth ? "done" : undefined}>
               {CONFIG.bridgeEthUrl ? (
                 <a href={CONFIG.bridgeEthUrl} target="_blank" rel="noopener noreferrer" aria-label="Bridge ETH from Base, opens bridge">
                   Bridge ETH from Base
@@ -162,7 +168,7 @@ export function Dashboard() {
                 </span>
               )}
             </li>
-            <li>
+            <li className={hasZen ? "done" : undefined}>
               {CONFIG.bridgeZenUrl ? (
                 <a href={CONFIG.bridgeZenUrl} target="_blank" rel="noopener noreferrer" aria-label={`Bridge ${symbol} from Base, opens bridge`}>
                   Bridge {symbol} from Base
@@ -175,7 +181,7 @@ export function Dashboard() {
                 </span>
               )}
             </li>
-            <li>
+            <li className={hasStaked ? "done" : undefined}>
               <a href="#position">Stake {symbol} on Horizen</a>
             </li>
           </ol>

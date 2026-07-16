@@ -1,9 +1,9 @@
 :root {
   /* Official Horizen palette */
   --hl-deep-blue: #030e24; /* page background */
-  --hl-panel: #071730; /* card surfaces (deep-blue-2) */
-  --hl-panel-2: #071730;
-  --hl-grey-light: #0b1e3e; /* inner surfaces — inputs, tabs bg, pos cells (deep-blue-3) */
+  --hl-panel: #091d3e; /* card surfaces (deep-blue-2) */
+  --hl-panel-2: #091d3e;
+  --hl-grey-light: #1a325b; /* inner surfaces — inputs, tabs bg, pos cells (deep-blue-3) */
   --hl-bright-blue: #1038bb; /* secondary highlights, selected states */
   --hl-sunrise: #fecb17; /* primary actions, important information */
   --hl-sunrise-light: #fff5ce; /* links, secondary yellow accents */
@@ -452,6 +452,13 @@ h3 {
   align-items: start;
   padding: 72px 0 56px;
 }
+/* Grid items default to min-width:auto (their content's min-content size),
+   which can force a track wider than its fr-share and push the whole page
+   into horizontal overflow on narrow viewports. Reset so long words/labels
+   wrap instead of blowing out the layout. */
+.hl-hero > * {
+  min-width: 0;
+}
 .hl-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -539,7 +546,7 @@ h1 em {
   font-size: 12.5px;
   font-weight: 700;
   color: var(--hl-navy-hover);
-  background: var(--hl-bright-blue);
+  background: var(--hl-grey-light);
   width: 28px;
   height: 28px;
   flex: none;
@@ -547,6 +554,12 @@ h1 em {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+}
+/* Onboarding step completed — number swaps for a checkmark, circle lights up
+   to signal done instead of pending. */
+.hl-steps li.done::before {
+  content: "✓";
+  background: var(--hl-bright-blue);
 }
 .hl-steps li a,
 .hl-steps li span {
@@ -580,6 +593,15 @@ h1 em {
   font-size: 13px;
   color: var(--hl-grey-text);
   font-weight: 600;
+}
+/* Different font families (label = sans, address = mono) carry different
+   line-box metrics at the same font-size, which throws off align-items:center
+   by a couple of px. Pinning both to line-height:1 makes the two glyphs
+   center on their own box instead of on font-metric whitespace. */
+.hl-contract-line > * {
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 .hl-contract-link {
   color: var(--hl-sunrise-light);
@@ -710,6 +732,9 @@ h1 em {
   gap: 26px;
   align-items: start;
 }
+.hl-lower > * {
+  min-width: 0;
+}
 
 /* ---- Reward sources card ---- */
 .hl-sources {
@@ -741,7 +766,7 @@ h1 em {
   white-space: nowrap;
 }
 .hl-sources li span.live {
-  color: var(--hl-sunrise-light);
+  color: #7c9aff;
 }
 .hl-sources-note {
   font-size: 13px;
@@ -800,7 +825,7 @@ h1 em {
   max-width: 1180px;
   width: 100%;
   border-top: 1px solid var(--hl-grey);
-  padding: 26px clamp(20px, 4vw, 28px) 0;
+  padding: 26px clamp(20px, 4vw, 28px) 24px;
   margin-top: 40px;
   display: flex;
   align-items: center;
@@ -834,6 +859,15 @@ h1 em {
 @media (max-width: 560px) {
   .hl-stat-band {
     grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .hl-wrap {
+    padding: 0 18px;
+  }
+  .hl-footer {
+    padding-left: 18px;
+    padding-right: 18px;
   }
 }
 
