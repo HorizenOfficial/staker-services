@@ -450,7 +450,7 @@ h3 {
   grid-template-columns: 1.15fr 0.85fr;
   gap: 56px;
   align-items: start;
-  margin-bottom: 0;
+  padding: 72px 0 56px;
 }
 .hl-eyebrow {
   display: inline-flex;
@@ -785,6 +785,16 @@ h1 em {
   margin-bottom: 34px;
 }
 
+/* Body-copy paragraphs on How it works — capped at 78ch so long lines don't
+   stretch across the full card width. */
+.hl-intro {
+  color: var(--hl-grey-text);
+  font-size: 15.5px;
+  max-width: 78ch;
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
 /* ---- Footer ---- */
 .hl-footer {
   max-width: 1180px;
@@ -814,6 +824,8 @@ h1 em {
   }
   .hl-hero {
     grid-template-columns: 1fr;
+    gap: 36px;
+    padding-top: 44px;
   }
   .hl-stat-band {
     grid-template-columns: 1fr 1fr;

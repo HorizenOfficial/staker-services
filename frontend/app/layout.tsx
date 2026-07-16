@@ -46,7 +46,6 @@ export default function RootLayout({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                padding: "clamp(40px, 6vw, 56px) 0",
               }}
             >
               {children}

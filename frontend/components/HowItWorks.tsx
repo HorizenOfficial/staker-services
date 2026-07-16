@@ -120,7 +120,7 @@ export function HowItWorks() {
       </div>
 
       <div className="hl-card">
-        <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
+        <p className="hl-intro">
           {symbol} staking is the official staking program for the Horizen chain.{" "}
           <b style={{ color: "var(--hl-navy-hover)" }}>Fully on-chain and non-custodial.</b> Your {symbol} is locked
           only inside the public staking contract — no intermediary ever takes custody — and every
@@ -158,7 +158,7 @@ export function HowItWorks() {
         </div>
 
         <SectionLabel>How rewards are accrued</SectionLabel>
-        <p style={{ margin: "0 0 var(--hl-space-8)", color: "var(--hl-grey-text)", lineHeight: 1.6 }}>
+        <p className="hl-intro">
           Rewards are funded from multiple independent sources and streamed to stakers
           automatically — there is no manual allocation and no discretionary payout.
         </p>
