@@ -600,13 +600,14 @@ h1 em {
    center on their own box instead of on font-metric whitespace. */
 .hl-contract-line > * {
   line-height: 1;
-  display: inline-flex;
-  align-items: center;
 }
 .hl-contract-link {
   color: var(--hl-sunrise-light);
   text-decoration: none;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .hl-contract-link:hover {
   text-decoration: underline;
