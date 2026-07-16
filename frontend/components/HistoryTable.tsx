@@ -64,7 +64,7 @@ export function HistoryTable() {
   const symbol = useTokenSymbol();
 
   return (
-    <div style={{ maxWidth: 1180, width: "100%" }}>
+    <div className="hl-wrap">
       <div className="hl-page-head">
         <h1>
           Your <em>history</em>.

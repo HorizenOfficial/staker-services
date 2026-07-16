@@ -69,7 +69,7 @@ export function DepositsTable() {
   }
 
   return (
-    <div style={{ maxWidth: 880, width: "100%" }}>
+    <div style={{ maxWidth: 880, width: "100%", padding: "0 clamp(20px, 4vw, 28px)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "var(--hl-space-8)" }}>
         <div>
           <h1 style={{ fontSize: 45 }}>{CONFIG.singlePosition ? "My Stake" : "My Deposits"}</h1>

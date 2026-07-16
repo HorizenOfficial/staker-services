@@ -111,7 +111,7 @@ export function Dashboard() {
   }, [reloadUser, reloadDeposits]);
 
   return (
-    <div style={{ maxWidth: 1180, width: "100%" }}>
+    <div className="hl-wrap">
       {/* Hero */}
       <section className="hl-hero">
         <div>

@@ -89,7 +89,7 @@ export function Header() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header style={{ position: "relative", background: "transparent" }}>
+    <header style={{ position: "relative", background: "transparent", borderBottom: "1px solid var(--hl-grey)" }}>
       <div
         style={{
           maxWidth: 1180,
