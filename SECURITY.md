@@ -24,8 +24,10 @@ use GitHub's private vulnerability reporting on this repository
 - **Staking dApp** — this repository (`frontend/`), deployed at
   https://staking-testnet.horizen.io
 - **Staking contracts & subgraph** — https://github.com/HorizenOfficial/staker
-- **In-scope testnet contract addresses** — see
-  [`frontend/.env.testnet`](frontend/.env.testnet)
+- **In-scope testnet contract addresses**:
+  - ZenStaker: [`0x6BF7CF29a8bcE11Aa62Cf593d165C244fA4d3E31`](https://horizen-testnet.explorer.caldera.xyz/address/0x6BF7CF29a8bcE11Aa62Cf593d165C244fA4d3E31)
+  - RewardAccumulator: [`0x06f5555fee73EDdc385b6d76FE00DB2D96ccDaE8`](https://horizen-testnet.explorer.caldera.xyz/address/0x06f5555fee73EDdc385b6d76FE00DB2D96ccDaE8)
+  - tZEN token: [`0xb06EC4ce262D8dbDc24Fac87479A49A7DC4cFb87`](https://horizen-testnet.explorer.caldera.xyz/address/0xb06EC4ce262D8dbDc24Fac87479A49A7DC4cFb87)
 
 The authoritative scope, impacts, rewards, and rules of engagement are defined
 on the Immunefi program page; where this file and the program page differ, the
