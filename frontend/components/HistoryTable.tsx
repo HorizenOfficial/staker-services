@@ -16,21 +16,23 @@ function shortHash(hash: string): string {
 }
 
 const TYPE_META: Record<ActivityType, { label: string; color: string; bg: string }> = {
-  stake: { label: "Stake", color: "var(--hl-teal-text)", bg: "var(--hl-teal-light)" },
-  withdraw: { label: "Withdraw", color: "var(--hl-grey-text)", bg: "rgba(148, 168, 206, 0.08)" },
-  claim: { label: "Claim", color: "var(--hl-lavender-text)", bg: "var(--hl-lavender-light)" },
+  stake: { label: "Stake", color: "#ffffff", bg: "var(--hl-bright-blue)" },
+  withdraw: { label: "Withdraw", color: "var(--hl-grey-text)", bg: "var(--hl-grey-light)" },
+  claim: { label: "Claim", color: "var(--hl-deep-blue)", bg: "var(--hl-sunrise-light)" },
 };
 
 function TypeBadge({ type }: { type: ActivityType }) {
   const m = TYPE_META[type];
   return (
     <span
-      className="hl-mono"
       style={{
-        fontSize: 11,
-        letterSpacing: 1,
+        fontSize: 11.5,
+        fontWeight: 700,
+        letterSpacing: "0.08em",
         textTransform: "uppercase",
-        padding: "4px 10px",
+        borderRadius: 6,
+        padding: "5px 11px",
+        display: "inline-block",
         color: m.color,
         background: m.bg,
       }}
@@ -43,7 +45,7 @@ function TypeBadge({ type }: { type: ActivityType }) {
 const th: React.CSSProperties = {
   textAlign: "left",
   padding: "var(--hl-space-5)",
-  borderBottom: "2px solid var(--hl-gold)",
+  borderBottom: "2px solid var(--hl-sunrise)",
 };
 const td: React.CSSProperties = { padding: "var(--hl-space-5)", fontSize: 14 };
 
@@ -63,12 +65,12 @@ export function HistoryTable() {
 
   return (
     <div style={{ maxWidth: 1180, width: "100%" }}>
-      <h1 style={{ fontSize: "clamp(40px, 5vw, 58px)" }}>
-        Staking transaction <em>history</em>.
-      </h1>
-      <p style={{ color: "var(--hl-grey-text)", margin: "var(--hl-space-2) 0 var(--hl-space-8)" }}>
-        All staking operations for the connected address.
-      </p>
+      <div className="hl-page-head">
+        <h1>
+          Your <em>history</em>.
+        </h1>
+        <p className="hl-page-sub">All staking operations for the connected address.</p>
+      </div>
 
       {!address ? (
         <Empty>

@@ -327,7 +327,7 @@ function RowBtn({ children, onClick, disabled }: { children: React.ReactNode; on
         textTransform: "uppercase",
         padding: "8px 12px",
         border: "1px solid var(--hl-navy)",
-        background: "var(--hl-white)",
+        background: "var(--hl-panel)",
         color: "var(--hl-navy)",
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.4 : 1,

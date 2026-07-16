@@ -7,7 +7,7 @@ import { useStake } from "@/lib/useStake";
 import { useDepositActions, actionStepLabel } from "@/lib/useDepositActions";
 import { useLearnedDeposits } from "@/lib/learnedDeposits";
 import { getReadContracts } from "@/lib/contracts";
-import { formatToken, truncateAddress } from "@/lib/format";
+import { formatToken } from "@/lib/format";
 import type { DepositDetail } from "@/lib/useDeposits";
 import { usePolling } from "@/lib/usePolling";
 
@@ -36,17 +36,17 @@ function stakeStepInfo(status: string, totalSteps: number): { n: number; label: 
 
 const posStat: React.CSSProperties = {
   background: "var(--hl-grey-light)",
-  border: "1px solid var(--hl-grey)",
   borderRadius: "var(--hl-radius-sm)",
-  padding: 18,
+  padding: 20,
 };
 
 // Single-position dashboard card: display-only Staked/Unclaimed cells plus an
 // inline Stake / Withdraw / Claim tab switcher (no dialogs), matching the
 // redesigned mockup. Multi-deposit management stays dialog-based on /deposits.
+// The outer "My position" card and header live in Dashboard, shared across
+// the connect / wrong-network / connected states.
 export function PositionPanel({
   symbol,
-  address,
   position,
   deposits,
   stakedBalance,
@@ -54,7 +54,6 @@ export function PositionPanel({
   onRefresh,
 }: {
   symbol: string;
-  address: string;
   position: DepositDetail | null;
   // Every deposit the wallet holds. Normally just [position] (or empty), but
   // staking directly against the contract (bypassing stakeMore) can leave
@@ -72,21 +71,7 @@ export function PositionPanel({
   const unclaimedDisplay = liveUnclaimed ?? position?.unclaimedRewards ?? null;
 
   return (
-    <div className="hl-card">
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "var(--hl-space-6)",
-          gap: "var(--hl-space-4)",
-          flexWrap: "wrap",
-        }}
-      >
-        <h2 className="hl-card-title">My position</h2>
-        <span className="hl-addr-pill">{truncateAddress(address)}</span>
-      </div>
-
+    <>
       <div
         style={{
           display: "grid",
@@ -106,8 +91,8 @@ export function PositionPanel({
             {symbol}
           </span>
         </div>
-        <div style={{ ...posStat, background: "var(--hl-gold-soft)", borderColor: "rgba(217,163,68,.35)" }}>
-          <div className="hl-label" style={{ marginBottom: 12, color: "rgba(217,163,68,.75)" }}>
+        <div style={posStat}>
+          <div className="hl-label" style={{ marginBottom: 12 }}>
             Unclaimed rewards
           </div>
           <div className="hl-mono" style={{ fontSize: 24, fontWeight: 500, color: "var(--hl-gold-bright)" }}>
@@ -158,7 +143,7 @@ export function PositionPanel({
           <ClaimPanel symbol={symbol} deposits={deposits} unclaimedDisplay={unclaimedDisplay} onDone={onRefresh} />
         )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -266,7 +251,7 @@ function StakePanel({
       {amountError && <p style={{ color: "var(--hl-error)", fontSize: 13, marginTop: 8 }}>{amountError}</p>}
 
       <button type="submit" className="hl-btn hl-btn-primary" style={{ width: "100%", marginTop: "var(--hl-space-5)" }} disabled={!canSubmit}>
-        {busy ? "Processing…" : position || resolvingExisting ? "Add to Stake" : "Stake " + symbol}
+        {busy ? "Processing…" : position || resolvingExisting ? "Add to stake" : "Stake " + symbol}
       </button>
       <p style={{ fontSize: 12.5, color: "var(--hl-grey-text)", textAlign: "center", marginTop: "var(--hl-space-4)" }}>
         Rewards accrue continuously and never expire.
@@ -370,10 +355,10 @@ function WithdrawPanel({
       )}
 
       <button type="submit" className="hl-btn hl-btn-primary" style={{ width: "100%", marginTop: "var(--hl-space-5)" }} disabled={!canSubmit}>
-        {actions.busy ? "Processing…" : "Withdraw " + symbol}
+        {actions.busy ? "Processing…" : "Withdraw"}
       </button>
       <p style={{ fontSize: 12.5, color: "var(--hl-grey-text)", textAlign: "center", marginTop: "var(--hl-space-4)" }}>
-        Withdrawn {symbol} is sent straight to your wallet — no lock-up.
+        Your principal is never locked — withdraw whenever you want.
       </p>
 
       {stepLabel && (
@@ -413,7 +398,7 @@ function ClaimPanel({
   return (
     <div>
       <div className="hl-claim-box">
-        <div className="hl-label" style={{ color: "rgba(217,163,68,.75)", marginBottom: 12 }}>
+        <div className="hl-label" style={{ marginBottom: 12 }}>
           Rewards ready to claim
         </div>
         <div className="hl-claim-amount">{unclaimedDisplay !== null ? formatToken(unclaimedDisplay, 6) : "—"}</div>

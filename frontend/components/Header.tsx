@@ -35,18 +35,12 @@ function NavLink({
     <Link
       href={href}
       onClick={onNavigate}
-      style={{
-        fontFamily: "var(--font-display), sans-serif",
-        fontWeight: 400,
-        fontSize: block ? 14 : 12.5,
-        letterSpacing: "0.06em",
-        textDecoration: "none",
-        color: active ? "var(--hl-yellow)" : "var(--hl-grey-text)",
-        background: active && !block ? "rgba(143, 169, 255, 0.1)" : "transparent",
-        borderRadius: 999,
-        padding: block ? "8px 0" : "8px 14px",
-        display: block ? "block" : undefined,
-      }}
+      className={`hl-nav-link${active && !block ? " active" : ""}`}
+      style={
+        block
+          ? { display: "block", padding: "8px 0", background: "transparent", color: active ? "var(--hl-navy-hover)" : "var(--hl-grey-text)" }
+          : undefined
+      }
     >
       {label}
     </Link>
@@ -85,7 +79,7 @@ function WalletControls() {
       onClick={connect}
       disabled={connecting}
     >
-      {connecting ? "Connecting…" : "Connect Wallet"}
+      {connecting ? "Connecting…" : "Connect wallet"}
     </button>
   );
 }
@@ -128,13 +122,12 @@ export function Header() {
               fontFamily: "var(--font-display), sans-serif",
               fontWeight: 500,
               fontSize: 15,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "var(--hl-yellow)",
+              letterSpacing: "0.1em",
+              color: "var(--hl-grey-text)",
               whiteSpace: "nowrap",
             }}
           >
-            / STAKING
+            / Staking
           </span>
         </Link>
         <nav className="hl-nav-desktop" aria-label="Primary">
