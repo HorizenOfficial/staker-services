@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { useWallet } from "@/lib/wallet";
 import { useGlobalState, useUserSummary, useLiveReward } from "@/lib/useDashboard";
 import { useDeposits } from "@/lib/useDeposits";
+import { useOnboardingStatus } from "@/lib/useOnboardingStatus";
 import {
   addressUrl,
   dailyRate,
@@ -35,15 +36,6 @@ function ExplorerAddress({ address }: { address: string }) {
     <a className="hl-address hl-contract-link" href={href} target="_blank" rel="noopener noreferrer" style={style}>
       {address}
     </a>
-  );
-}
-
-// Small star bullet used in front of each hero chip label.
-function ChipIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <path d="M6 0l1.6 4.4L12 6 7.6 7.6 6 12 4.4 7.6 0 6l4.4-1.6L6 0z" style={{ fill: "var(--hl-yellow)" }} />
-    </svg>
   );
 }
 
@@ -78,8 +70,19 @@ const grid: React.CSSProperties = {
 
 const btnRow: React.CSSProperties = { display: "flex", gap: "var(--hl-space-3)", flexWrap: "wrap" };
 
+const cardHead: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  marginBottom: "var(--hl-space-6)",
+  gap: "var(--hl-space-4)",
+  flexWrap: "wrap",
+};
+
+const posEmpty: React.CSSProperties = { textAlign: "center", padding: "44px 20px" };
+
 export function Dashboard() {
-  const { address, isCorrectChain, switchChain, addNetwork, addToken } = useWallet();
+  const { address, isCorrectChain, switchChain, addNetwork, addToken, connect, connecting } = useWallet();
   const active = address && isCorrectChain ? address : null;
   const symbol = useTokenSymbol();
 
@@ -95,6 +98,11 @@ export function Dashboard() {
   // Single-position: one deposit drives Withdraw/Claim.
   const position = CONFIG.singlePosition ? deposits[0] ?? null : null;
 
+  // Onboarding checklist: each step reads as done once the wallet has
+  // demonstrably taken it (holds ETH / holds ZEN / has ZEN staked).
+  const { hasEth, hasZen } = useOnboardingStatus(active);
+  const hasStaked = (user?.totalStaked ?? 0n) > 0n;
+
   const liveUnclaimed = useLiveReward(
     user?.totalUnclaimed ?? null,
     global?.rewardRate ?? 0n,
@@ -109,7 +117,7 @@ export function Dashboard() {
   }, [reloadUser, reloadDeposits]);
 
   return (
-    <div style={{ maxWidth: 1180, width: "100%" }}>
+    <div className="hl-wrap">
       {/* Hero */}
       <section className="hl-hero">
         <div>
@@ -118,21 +126,22 @@ export function Dashboard() {
             Earn on <em>Horizen</em>.
           </h1>
           <p style={{ color: "var(--hl-grey-text)", fontSize: 16.5, maxWidth: "52ch", marginBottom: "var(--hl-space-6)" }}>
-            ZEN staking is the hub for participation in the {symbol} token economy - with a single
+            {symbol} staking is the hub for participation in the {symbol} token economy — with a single
             staking pool that <strong>earns rewards from multiple, independent sources</strong> tied
-            to the real ecosystem activity.
+            to real ecosystem activity.
           </p>
           <div className="hl-chips">
             <span className="hl-chip">
-              <ChipIcon /> Non-custodial
+              <span className="hl-plus" aria-hidden="true">+</span> Non-custodial
             </span>
             <span className="hl-chip">
-              <ChipIcon /> On-chain settlement
+              <span className="hl-plus" aria-hidden="true">+</span> On-chain settlement
             </span>
             <span className="hl-chip">
-              <ChipIcon /> {symbol} token rewards
+              <span className="hl-plus" aria-hidden="true">+</span> {symbol} token rewards
             </span>
           </div>
+          <div className="hl-ascii-accent" aria-hidden="true">· + · + · + · + · + · + · + · + · + · + · + · +</div>
         </div>
 
         <aside className="hl-card hl-setup" aria-label="Get set up">
@@ -146,7 +155,7 @@ export function Dashboard() {
             </button>
           </div>
           <ol className="hl-steps">
-            <li>
+            <li className={hasEth ? "done" : undefined}>
               {CONFIG.bridgeEthUrl ? (
                 <a href={CONFIG.bridgeEthUrl} target="_blank" rel="noopener noreferrer" aria-label="Bridge ETH from Base, opens bridge">
                   Bridge ETH from Base
@@ -159,7 +168,7 @@ export function Dashboard() {
                 </span>
               )}
             </li>
-            <li>
+            <li className={hasZen ? "done" : undefined}>
               {CONFIG.bridgeZenUrl ? (
                 <a href={CONFIG.bridgeZenUrl} target="_blank" rel="noopener noreferrer" aria-label={`Bridge ${symbol} from Base, opens bridge`}>
                   Bridge {symbol} from Base
@@ -172,7 +181,7 @@ export function Dashboard() {
                 </span>
               )}
             </li>
-            <li>
+            <li className={hasStaked ? "done" : undefined}>
               <a href="#position">Stake {symbol} on Horizen</a>
             </li>
           </ol>
@@ -233,34 +242,46 @@ export function Dashboard() {
       <div id="position" className="hl-lower">
       <div>
       {!address ? (
-        <>
-          <SectionLabel>Your Position:</SectionLabel>
-          <div className="hl-card" style={{ textAlign: "center", padding: "var(--hl-space-12)" }}>
-            <p style={{ color: "var(--hl-grey-text)", margin: 0 }}>
+        <div className="hl-card">
+          <div style={cardHead}>
+            <h2 className="hl-card-title">My position</h2>
+          </div>
+          <div style={posEmpty}>
+            <p style={{ color: "var(--hl-grey-text)", marginBottom: "var(--hl-space-5)" }}>
               Connect your wallet to see your staking position.
             </p>
+            <button className="hl-btn hl-btn-primary" onClick={connect} disabled={connecting}>
+              {connecting ? "Connecting…" : "Connect wallet"}
+            </button>
           </div>
-        </>
+        </div>
       ) : !isCorrectChain ? (
-        <>
-          <SectionLabel>Your Position:</SectionLabel>
+        <div className="hl-card">
+          <div style={cardHead}>
+            <h2 className="hl-card-title">My position</h2>
+          </div>
           <div className="hl-alert hl-alert-warning" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--hl-space-5)", flexWrap: "wrap" }}>
             <span>Switch to the correct network to view your position.</span>
             <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={switchChain}>
               Switch network
             </button>
           </div>
-        </>
+        </div>
       ) : CONFIG.singlePosition ? (
-        <PositionPanel
-          symbol={symbol}
-          address={address}
-          position={position}
-          deposits={deposits}
-          stakedBalance={user?.totalStaked ?? null}
-          liveUnclaimed={liveUnclaimed}
-          onRefresh={refresh}
-        />
+        <div className="hl-card">
+          <div style={cardHead}>
+            <h2 className="hl-card-title">My position</h2>
+            <span className="hl-addr-pill">{truncateAddress(address)}</span>
+          </div>
+          <PositionPanel
+            symbol={symbol}
+            position={position}
+            deposits={deposits}
+            stakedBalance={user?.totalStaked ?? null}
+            liveUnclaimed={liveUnclaimed}
+            onRefresh={refresh}
+          />
+        </div>
       ) : (
         <>
           <SectionLabel>Your Position:</SectionLabel>

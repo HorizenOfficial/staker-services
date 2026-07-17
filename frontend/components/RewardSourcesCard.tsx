@@ -6,11 +6,14 @@ type SourceStatus = "Live" | "Onboarding" | "In development";
 const SOURCES: { label: string; status: SourceStatus }[] = [
   { label: "Horizen DAO - ZEN bootstrap", status: "Live" },
   { label: "Horizen DAO - ZEN LP earnings", status: "Live" },
-  { label: "Ecosystem aplications & protocol fee sharing", status: "Onboarding" },
-  { label: "Horizen Foundation - zkVerify node emissions", status: "Live" },
-  { label: "Horizen Labs - Vela confidential compute", status: "In development" },
+  { label: "Protocol & app fee sharing", status: "Onboarding" },
+  { label: "zkVerify node emissions", status: "Live" },
+  { label: "Vela confidential compute", status: "In development" },
   { label: "Horizen L3 sequencer fees", status: "Live" },
 ];
+
+const ZENIP_URL =
+  "https://horizen.discourse.group/t/zenip-42408-authorization-of-zen-allocation-for-a-phased-alignment-first-zen-staking-program/1086";
 
 export function RewardSourcesCard() {
   return (
@@ -27,7 +30,10 @@ export function RewardSourcesCard() {
         ))}
       </ul>
       <p className="hl-sources-note">
-        Approved by the Horizen DAO - ZenIP-42408
+        Approved by the Horizen DAO -{" "}
+        <a href={ZENIP_URL} target="_blank" rel="noopener noreferrer">
+          ZenIP-42408 ↗
+        </a>
       </p>
     </div>
   );

@@ -27,13 +27,12 @@ export function StatCard({
         {label}
       </div>
       <div
-        className="hl-mono"
         style={{
           fontSize: 28,
-          fontWeight: 500,
+          fontWeight: 700,
           lineHeight: 1.1,
           letterSpacing: "-0.01em",
-          color: tone === "gold" ? "var(--hl-gold-bright)" : "var(--hl-navy)",
+          color: tone === "gold" ? "var(--hl-gold-bright)" : "var(--hl-navy-hover)",
         }}
       >
         {value}
@@ -41,9 +40,7 @@ export function StatCard({
       {/* unit and hint sit on their own line below the value so the unit never
           wraps onto the number; aligned consistently across all cards */}
       {unit && (
-        <div className="hl-mono" style={{ fontSize: 12, color: "var(--hl-grey-text)", marginTop: 8 }}>
-          {unit}
-        </div>
+        <div style={{ fontSize: 12.5, fontWeight: 500, color: "var(--hl-grey-text)", marginTop: 8 }}>{unit}</div>
       )}
       {hint && (
         <div style={{ fontSize: 13, color: "var(--hl-grey-text)", marginTop: 8 }}>{hint}</div>
