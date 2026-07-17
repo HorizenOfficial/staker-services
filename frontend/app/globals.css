@@ -594,11 +594,14 @@ h1 em {
   color: var(--hl-grey-text);
   font-weight: 600;
 }
-/* Different font families (label = sans, address = mono) carry different
-   line-box metrics at the same font-size, which throws off align-items:center
-   by a couple of px. Pinning both to line-height:1 makes the two glyphs
-   center on their own box instead of on font-metric whitespace. */
+/* Label (sans) and address (mono, with inline icon) have different font
+   line-box metrics, so align-items:center on the row alone doesn't land them
+   on the same visual center. Giving both an identical explicit box height
+   centers them geometrically instead of by font metrics. */
 .hl-contract-line > * {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
   line-height: 1;
 }
 .hl-contract-link {
