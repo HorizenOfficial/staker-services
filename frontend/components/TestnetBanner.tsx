@@ -12,16 +12,16 @@ export function TestnetBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="hl-mono"
       style={{
         background: "transparent",
-        color: "var(--hl-gold-bright)",
+        borderBottom: "1px solid var(--hl-grey)",
+        color: "var(--hl-sunrise)",
+        fontFamily: "var(--font-sans)",
         textAlign: "center",
-        padding: "10px clamp(20px, 4vw, 28px)",
+        padding: "11px 16px",
         fontWeight: 600,
-        fontSize: 12,
-        letterSpacing: 1.2,
-        textTransform: "uppercase",
+        fontSize: 13,
+        letterSpacing: "0.04em",
       }}
     >
       You are in testnet environment!

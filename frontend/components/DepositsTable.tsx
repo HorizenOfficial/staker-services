@@ -69,7 +69,7 @@ export function DepositsTable() {
   }
 
   return (
-    <div style={{ maxWidth: 880, width: "100%" }}>
+    <div style={{ maxWidth: 880, width: "100%", padding: "0 clamp(20px, 4vw, 28px)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "var(--hl-space-8)" }}>
         <div>
           <h1 style={{ fontSize: 45 }}>{CONFIG.singlePosition ? "My Stake" : "My Deposits"}</h1>
@@ -327,7 +327,7 @@ function RowBtn({ children, onClick, disabled }: { children: React.ReactNode; on
         textTransform: "uppercase",
         padding: "8px 12px",
         border: "1px solid var(--hl-navy)",
-        background: "var(--hl-white)",
+        background: "var(--hl-panel)",
         color: "var(--hl-navy)",
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.4 : 1,
