@@ -189,8 +189,7 @@ export function Dashboard() {
             <span className="hl-label">{symbol} staking contract</span>
             {addressUrl(CONFIG.contractStaker) ? (
               <a className="hl-address hl-contract-link" href={addressUrl(CONFIG.contractStaker)!} target="_blank" rel="noopener noreferrer">
-                {truncateAddress(CONFIG.contractStaker)}
-                <ExtIcon />
+                {truncateAddress(CONFIG.contractStaker)} ↗
               </a>
             ) : (
               <span className="hl-address hl-contract-link">{truncateAddress(CONFIG.contractStaker)}</span>
