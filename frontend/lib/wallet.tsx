@@ -112,6 +112,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     if (!window.ethereum) return;
     setError(null);
     try {
+      // wallet_watchAsset registers the token against whatever chain is
+      // currently active in the wallet — since CONFIG.contractToken is only
+      // valid on CONFIG.chainId, switch (or add) that chain first or the
+      // token gets added under the wrong network.
+      await switchChain();
       await window.ethereum.request?.({
         method: "wallet_watchAsset",
         params: {
@@ -122,7 +127,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to add token.");
     }
-  }, []);
+  }, [switchChain]);
 
   const connect = useCallback(async () => {
     setConnecting(true);

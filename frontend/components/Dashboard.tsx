@@ -79,7 +79,7 @@ const grid: React.CSSProperties = {
 const btnRow: React.CSSProperties = { display: "flex", gap: "var(--hl-space-3)", flexWrap: "wrap" };
 
 export function Dashboard() {
-  const { address, isCorrectChain, switchChain, addNetwork, addToken } = useWallet();
+  const { address, isCorrectChain, switchChain, addNetwork, addToken, error: walletError } = useWallet();
   const active = address && isCorrectChain ? address : null;
   const symbol = useTokenSymbol();
 
@@ -145,6 +145,11 @@ export function Dashboard() {
               + {symbol}
             </button>
           </div>
+          {walletError ? (
+            <span className="hl-label" style={{ color: "var(--hl-error)" }}>
+              {walletError}
+            </span>
+          ) : null}
           <ol className="hl-steps">
             <li>
               {CONFIG.bridgeEthUrl ? (
