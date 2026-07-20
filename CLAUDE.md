@@ -1,7 +1,7 @@
 Read the README.md for a description of the folder contents.
 
-For the project https://github.com/HorizenLabs/staker  you must:
-- base the work on the branch: pc/devnet 
+For the project https://github.com/HorizenOfficial/staker you must:
+- base the work on the branch: dev (merges to main at the v1 mainnet go-live)
 - see the file docs/frontend-integration.md for an explanation of the features that must be provided by the UX
 
 # General hints
@@ -43,7 +43,7 @@ case.
 
 # Dev environment
 
-To run the sysyem locally, the `staker/devnet/` docker-compose stack (anvil chain `31337` + graph-node +
+To run the system locally, the `staker/devnet/` docker-compose stack (anvil chain `31337` + graph-node +
 auto-deployed contracts & subgraph) can be used. Restarting anvil yields a fresh chain with
 deterministic addresses that stay the same across clean restarts. Deployed
 addresses live in `staker/broadcast/DeployZenStakerTestnet.s.sol/31337/run-latest.json`.
