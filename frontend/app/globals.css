@@ -521,6 +521,12 @@ h1 em {
   justify-content: center;
   border: 1px solid rgba(143, 169, 255, 0.35);
   border-radius: 50%;
+  transition: color var(--hl-transition-fast), border-color var(--hl-transition-fast);
+}
+.hl-steps li.done::before {
+  content: "✓";
+  color: var(--hl-success);
+  border-color: var(--hl-success);
 }
 .hl-steps li a,
 .hl-steps li span {

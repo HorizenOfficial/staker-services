@@ -16,6 +16,7 @@ import {
 } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
+import { useOnboardingStatus } from "@/lib/useOnboardingStatus";
 import { useTokenPriceUsd } from "@/lib/price";
 import { StatCard } from "./StatCard";
 import { StakeDialog } from "./StakeDialog";
@@ -95,6 +96,11 @@ export function Dashboard() {
   // Single-position: one deposit drives Withdraw/Claim.
   const position = CONFIG.singlePosition ? deposits[0] ?? null : null;
 
+  // Onboarding checklist: each step reads as done once the wallet has
+  // demonstrably taken it (holds ETH / holds ZEN / has ZEN staked).
+  const { hasEth, hasZen } = useOnboardingStatus(active);
+  const hasStaked = (user?.totalStaked ?? 0n) > 0n;
+
   const liveUnclaimed = useLiveReward(
     user?.totalUnclaimed ?? null,
     global?.rewardRate ?? 0n,
@@ -151,7 +157,7 @@ export function Dashboard() {
             </span>
           ) : null}
           <ol className="hl-steps">
-            <li>
+            <li className={hasEth ? "done" : undefined}>
               {CONFIG.bridgeEthUrl ? (
                 <a href={CONFIG.bridgeEthUrl} target="_blank" rel="noopener noreferrer" aria-label="Bridge ETH from Base, opens bridge">
                   Bridge ETH from Base
@@ -164,7 +170,7 @@ export function Dashboard() {
                 </span>
               )}
             </li>
-            <li>
+            <li className={hasZen ? "done" : undefined}>
               {CONFIG.bridgeZenUrl ? (
                 <a href={CONFIG.bridgeZenUrl} target="_blank" rel="noopener noreferrer" aria-label={`Bridge ${symbol} from Base, opens bridge`}>
                   Bridge {symbol} from Base
@@ -177,7 +183,7 @@ export function Dashboard() {
                 </span>
               )}
             </li>
-            <li>
+            <li className={hasStaked ? "done" : undefined}>
               <a href="#position">Stake {symbol} on Horizen</a>
             </li>
           </ol>
