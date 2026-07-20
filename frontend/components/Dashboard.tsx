@@ -82,7 +82,16 @@ const cardHead: React.CSSProperties = {
 const posEmpty: React.CSSProperties = { textAlign: "center", padding: "44px 20px" };
 
 export function Dashboard() {
-  const { address, isCorrectChain, switchChain, addNetwork, addToken, connect, connecting } = useWallet();
+  const {
+    address,
+    isCorrectChain,
+    switchChain,
+    addNetwork,
+    addToken,
+    connect,
+    connecting,
+    error: walletError,
+  } = useWallet();
   const active = address && isCorrectChain ? address : null;
   const symbol = useTokenSymbol();
 
@@ -154,6 +163,11 @@ export function Dashboard() {
               + {symbol}
             </button>
           </div>
+          {walletError ? (
+            <span className="hl-label" style={{ color: "var(--hl-error)" }}>
+              {walletError}
+            </span>
+          ) : null}
           <ol className="hl-steps">
             <li className={hasEth ? "done" : undefined}>
               {CONFIG.bridgeEthUrl ? (

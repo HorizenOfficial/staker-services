@@ -9,9 +9,9 @@ import {
   useState,
 } from "react";
 import { BrowserProvider, JsonRpcSigner } from "ethers";
-import { connectWallet } from "./contracts";
+import { connectWallet, getReadContracts } from "./contracts";
 import { CONFIG } from "./config";
-import { fetchTokenSymbol, getTokenSymbol } from "./tokenSymbol";
+import { fetchTokenSymbol } from "./tokenSymbol";
 
 interface WalletState {
   address: string | null;
@@ -112,17 +112,31 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     if (!window.ethereum) return;
     setError(null);
     try {
+      // wallet_watchAsset registers the token against whatever chain is
+      // currently active in the wallet — since CONFIG.contractToken is only
+      // valid on CONFIG.chainId, switch (or add) that chain first or the
+      // token gets added under the wrong network.
+      await switchChain();
+      // MetaMask rejects the request if symbol/decimals don't match the
+      // contract's own values exactly (e.g. testnet token is "tZEN", not the
+      // "ZEN" label used elsewhere in the UI) — read them on-chain instead of
+      // assuming.
+      const { token } = getReadContracts();
+      const [onChainSymbol, onChainDecimals] = await Promise.all([
+        token.symbol() as Promise<string>,
+        token.decimals() as Promise<bigint>,
+      ]);
       await window.ethereum.request?.({
         method: "wallet_watchAsset",
         params: {
           type: "ERC20",
-          options: { address: CONFIG.contractToken, symbol: getTokenSymbol(), decimals: 18 },
+          options: { address: CONFIG.contractToken, symbol: onChainSymbol, decimals: Number(onChainDecimals) },
         },
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to add token.");
     }
-  }, []);
+  }, [switchChain]);
 
   const connect = useCallback(async () => {
     setConnecting(true);
