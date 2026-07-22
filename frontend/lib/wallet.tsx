@@ -39,6 +39,18 @@ function chainParams() {
   };
 }
 
+// Mobile browsers can't run extensions, so the MetaMask app never injects
+// window.ethereum there — the dApp must be opened inside MetaMask's own
+// in-app browser instead. The universal link below does exactly that.
+function metamaskDeepLink() {
+  const { host, pathname, search } = window.location;
+  return `https://metamask.app.link/dapp/${host}${pathname}${search}`;
+}
+
+function isMobileBrowser() {
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
 type WalletSnapshot =
   | { connected: false }
   | { connected: true; address: string; chainId: number; signer: JsonRpcSigner };
@@ -139,6 +151,12 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, [switchChain]);
 
   const connect = useCallback(async () => {
+    // No injected provider on a mobile browser → hand off to the MetaMask
+    // in-app browser via its universal link instead of failing.
+    if (!window.ethereum && isMobileBrowser()) {
+      window.location.href = metamaskDeepLink();
+      return;
+    }
     setConnecting(true);
     setError(null);
     try {
