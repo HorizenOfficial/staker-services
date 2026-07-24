@@ -42,8 +42,8 @@ export const CONFIG = {
   contractToken: process.env.NEXT_PUBLIC_CONTRACT_TOKEN as string,
   subgraph: process.env.NEXT_PUBLIC_SUBGRAPH as string,
   explorerUrl: process.env.NEXT_PUBLIC_EXPLORER_URL ?? "",
-  // Terms & Conditions link (footer). Defaults to the Horizen homepage when unset.
-  termsUrl: process.env.NEXT_PUBLIC_TERMS_URL ?? "https://horizen.io/",
+  // Terms & Conditions link (footer). Defaults to the Horizen staking terms when unset.
+  termsUrl: process.env.NEXT_PUBLIC_TERMS_URL ?? "https://horizen.io/staking-terms",
   // Used to register the network in the wallet (wallet_addEthereumChain) when it
   // isn't known yet, so "switch network" can succeed instead of erroring 4902.
   chainName: chainNameFor(chainId),
