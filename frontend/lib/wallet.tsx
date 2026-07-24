@@ -39,6 +39,30 @@ function chainParams() {
   };
 }
 
+// Mobile browsers can't run extensions, so the MetaMask app never injects
+// window.ethereum there — the dApp must be opened inside MetaMask's own
+// in-app browser instead. The universal link below does exactly that.
+function metamaskDeepLink() {
+  const { host, pathname, search } = window.location;
+  return `https://metamask.app.link/dapp/${host}${pathname}${search}`;
+}
+
+function isMobileBrowser() {
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+// A deliberate "Cancel" in the wallet popup is not a failure — don't surface
+// it as an error. EIP-1193 signals it as code 4001; ethers wraps it as
+// ACTION_REJECTED.
+function isUserRejection(e: unknown): boolean {
+  const err = e as { code?: number | string; message?: string };
+  return (
+    err?.code === 4001 ||
+    err?.code === "ACTION_REJECTED" ||
+    (typeof err?.message === "string" && err.message.toLowerCase().includes("user rejected"))
+  );
+}
+
 type WalletSnapshot =
   | { connected: false }
   | { connected: true; address: string; chainId: number; signer: JsonRpcSigner };
@@ -78,7 +102,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       });
     } catch (e) {
       // 4902: the wallet doesn't know this chain — add it (which also makes it
-      // current). Other codes (e.g. 4001 user-rejected) just surface as an error.
+      // current). A user rejection is silent; other codes surface as an error.
       const code = (e as { code?: number })?.code;
       if (code === 4902) {
         try {
@@ -87,11 +111,15 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
             params: [chainParams()],
           });
         } catch (addErr) {
-          setError(addErr instanceof Error ? addErr.message : "Failed to add network.");
+          if (!isUserRejection(addErr)) {
+            setError(addErr instanceof Error ? addErr.message : "Failed to add network.");
+          }
         }
         return;
       }
-      setError(e instanceof Error ? e.message : "Failed to switch network.");
+      if (!isUserRejection(e)) {
+        setError(e instanceof Error ? e.message : "Failed to switch network.");
+      }
     }
   }, []);
 
@@ -104,7 +132,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         params: [chainParams()],
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to add network.");
+      if (!isUserRejection(e)) {
+        setError(e instanceof Error ? e.message : "Failed to add network.");
+      }
     }
   }, []);
 
@@ -134,11 +164,19 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         },
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to add token.");
+      if (!isUserRejection(e)) {
+        setError(e instanceof Error ? e.message : "Failed to add token.");
+      }
     }
   }, [switchChain]);
 
   const connect = useCallback(async () => {
+    // No injected provider on a mobile browser → hand off to the MetaMask
+    // in-app browser via its universal link instead of failing.
+    if (!window.ethereum && isMobileBrowser()) {
+      window.location.href = metamaskDeepLink();
+      return;
+    }
     setConnecting(true);
     setError(null);
     try {
@@ -153,7 +191,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         await switchChain();
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to connect.");
+      if (!isUserRejection(e)) {
+        setError(e instanceof Error ? e.message : "Failed to connect.");
+      }
     } finally {
       setConnecting(false);
     }
