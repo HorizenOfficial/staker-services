@@ -841,6 +841,12 @@ h1 em {
   color: var(--hl-grey-text);
   font-size: 13px;
 }
+.hl-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 .hl-footer a {
   color: var(--hl-sunrise-light);
   text-decoration: none;
