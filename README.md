@@ -61,6 +61,7 @@ previews. The "testnet environment" banner shows automatically whenever
 | `CONTRACT_TOKEN` | ZEN token (ERC-20) address | `0x…` |
 | `SUBGRAPH` | Public subgraph GraphQL endpoint | `https://…/subgraphs/name/zen-staker` |
 | `EXPLORER_URL` | Block-explorer base URL (for tx/address links) | `https://explorer.example.com` |
+| `TERMS_URL` | Terms & Conditions URL (footer link, optional, defaults to `https://horizen.io/staking-terms`) | `https://example.com/terms` |
 | `SINGLE_POSITION` | Single aggregated position UX (`true`/`false`) | `true` |
 | `NATIVE_CURRENCY` | Native gas-token symbol (defaults to `ETH`) | `ETH` |
 | `NODE_VERSION` | Build Node version (Next 16 needs ≥ 20) | `24.16.0` |
