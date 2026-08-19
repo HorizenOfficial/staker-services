@@ -15,7 +15,7 @@ async function query<T>(gql: string, variables: Record<string, unknown>): Promis
 
 const USER_DEPOSITS = /* GraphQL */ `
   query UserDeposits($owner: Bytes!) {
-    deposits(first: 1000, where: { owner: $owner, stakedAmount_gt: "0" }) {
+    deposits(first: 1000, where: { owner: $owner }) {
       id
       stakedAmount
       earningPower
@@ -29,7 +29,11 @@ export interface SubgraphDeposit {
   earningPower: string;
 }
 
-// Active deposit IDs (balance > 0) for an owner. Owner must be lowercased.
+// All deposit IDs ever opened by an owner, including fully-withdrawn ones —
+// a withdrawal zeroes stakedAmount but not unclaimedReward, so a
+// stakedAmount_gt filter here would permanently hide deposits that still
+// have rewards to claim. Callers filter for display using live chain reads
+// (balance / unclaimedRewards), not this raw list. Owner must be lowercased.
 export async function fetchUserDeposits(owner: string): Promise<SubgraphDeposit[]> {
   const data = await query<{ deposits: SubgraphDeposit[] }>(USER_DEPOSITS, {
     owner: owner.toLowerCase(),
