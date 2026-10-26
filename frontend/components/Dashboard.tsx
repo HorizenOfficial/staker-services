@@ -120,6 +120,8 @@ export function Dashboard() {
     global?.rewardEndTime ?? 0n
   );
 
+  const dailyRewards = global ? dailyRate(global.activeRewardRate) : null;
+
   const refresh = useCallback(() => {
     reloadUser();
     reloadDeposits();
@@ -237,7 +239,7 @@ export function Dashboard() {
               <InfoTooltip text="ZEN is not a security. Rewards and rewards rate are not guaranteed, and stakers should have no expectation of profit. The ZEN staking program is subject to additional Terms & Conditions." />
             </span>
             <div className="hl-stat-value gold">
-              {global ? formatPct(estimateApr(dailyRate(global.rewardRate), global.totalStaked)) : "…"}
+              {global && dailyRewards !== null ? formatPct(estimateApr(dailyRewards, global.totalStaked)) : "…"}
             </div>
             <span className="hl-stat-unit">Trailing · variable</span>
           </div>
@@ -246,7 +248,7 @@ export function Dashboard() {
               Daily rewards{" "}
               <InfoTooltip text="ZEN is not a security. Rewards and rewards rate are not guaranteed, and stakers should have no expectation of profit. The ZEN staking program is subject to additional Terms & Conditions." />
             </span>
-            <div className="hl-stat-value gold">{global ? formatToken(dailyRate(global.rewardRate), 6) : "…"}</div>
+            <div className="hl-stat-value gold">{dailyRewards !== null ? formatToken(dailyRewards, 6) : "…"}</div>
             <span className="hl-stat-unit">{symbol} / day</span>
           </div>
         </div>
