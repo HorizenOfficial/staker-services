@@ -788,6 +788,10 @@ h1 em {
 .hl-sources-note a:hover {
   text-decoration: underline;
 }
+.hl-winddown-banner a {
+  color: var(--hl-sunrise-light);
+  text-decoration: underline;
+}
 
 /* ---- Shared content wrap ----
    Matches the mockup's .wrap: max-width includes its own horizontal

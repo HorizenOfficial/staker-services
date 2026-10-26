@@ -16,6 +16,7 @@ import {
   truncateAddress,
 } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
+import { WINDDOWN_ACTIVE, WINDDOWN_ENDED_LABEL } from "./WinddownBanner";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
 import { useTokenPriceUsd } from "@/lib/price";
 import { StatCard } from "./StatCard";
@@ -241,7 +242,9 @@ export function Dashboard() {
             <div className="hl-stat-value gold">
               {global && dailyRewards !== null ? formatPct(estimateApr(dailyRewards, global.totalStaked)) : "…"}
             </div>
-            <span className="hl-stat-unit">Trailing · variable</span>
+            <span className="hl-stat-unit">
+              {WINDDOWN_ACTIVE && dailyRewards === 0n ? WINDDOWN_ENDED_LABEL : "Trailing · variable"}
+            </span>
           </div>
           <div className="hl-stat-cell">
             <span className="hl-label">
