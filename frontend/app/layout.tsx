@@ -4,6 +4,7 @@ import { WalletProvider } from "@/lib/wallet";
 import { LearnedDepositsProvider } from "@/lib/learnedDeposits";
 import { Header } from "@/components/Header";
 import { TestnetBanner } from "@/components/TestnetBanner";
+import { WinddownBanner } from "@/components/WinddownBanner";
 import { SubgraphHealthBanner } from "@/components/SubgraphHealthBanner";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({
           <LearnedDepositsProvider>
             <Header />
             <TestnetBanner />
+            <WinddownBanner />
             <SubgraphHealthBanner />
             <main
               id="main-content"

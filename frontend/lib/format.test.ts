@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseEther } from "ethers";
 import {
+  effectiveRewardRate,
   estimateApr,
   formatPct,
   formatToken,
@@ -22,6 +23,21 @@ describe("formatToken", () => {
 
   it("formats zero", () => {
     expect(formatToken(0n)).toBe("0");
+  });
+});
+
+describe("effectiveRewardRate", () => {
+  it("returns the rate while the distribution window is open", () => {
+    expect(effectiveRewardRate(5n, 1000n, 999n)).toBe(5n);
+  });
+
+  it("returns 0 once the window has ended", () => {
+    expect(effectiveRewardRate(5n, 1000n, 1000n)).toBe(0n);
+    expect(effectiveRewardRate(5n, 1000n, 2000n)).toBe(0n);
+  });
+
+  it("returns 0 when rewards were never notified", () => {
+    expect(effectiveRewardRate(0n, 0n, 1000n)).toBe(0n);
   });
 });
 

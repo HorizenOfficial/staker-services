@@ -16,6 +16,7 @@ import {
   truncateAddress,
 } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
+import { WINDDOWN_ACTIVE, WINDDOWN_ENDED_LABEL } from "./WinddownBanner";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
 import { useTokenPriceUsd } from "@/lib/price";
 import { StatCard } from "./StatCard";
@@ -119,6 +120,8 @@ export function Dashboard() {
     global?.totalEarningPower ?? 0n,
     global?.rewardEndTime ?? 0n
   );
+
+  const dailyRewards = global ? dailyRate(global.activeRewardRate) : null;
 
   const refresh = useCallback(() => {
     reloadUser();
@@ -237,16 +240,18 @@ export function Dashboard() {
               <InfoTooltip text="ZEN is not a security. Rewards and rewards rate are not guaranteed, and stakers should have no expectation of profit. The ZEN staking program is subject to additional Terms & Conditions." />
             </span>
             <div className="hl-stat-value gold">
-              {global ? formatPct(estimateApr(dailyRate(global.rewardRate), global.totalStaked)) : "…"}
+              {global && dailyRewards !== null ? formatPct(estimateApr(dailyRewards, global.totalStaked)) : "…"}
             </div>
-            <span className="hl-stat-unit">Trailing · variable</span>
+            <span className="hl-stat-unit">
+              {WINDDOWN_ACTIVE && dailyRewards === 0n ? WINDDOWN_ENDED_LABEL : "Trailing · variable"}
+            </span>
           </div>
           <div className="hl-stat-cell">
             <span className="hl-label">
               Daily rewards{" "}
               <InfoTooltip text="ZEN is not a security. Rewards and rewards rate are not guaranteed, and stakers should have no expectation of profit. The ZEN staking program is subject to additional Terms & Conditions." />
             </span>
-            <div className="hl-stat-value gold">{global ? formatToken(dailyRate(global.rewardRate), 6) : "…"}</div>
+            <div className="hl-stat-value gold">{dailyRewards !== null ? formatToken(dailyRewards, 6) : "…"}</div>
             <span className="hl-stat-unit">{symbol} / day</span>
           </div>
         </div>

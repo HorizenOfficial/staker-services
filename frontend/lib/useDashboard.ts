@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getReadContracts } from "./contracts";
+import { effectiveRewardRate } from "./format";
 import { fetchUserDepositIds } from "./subgraph";
 import { usePolling } from "./usePolling";
 
@@ -12,6 +13,8 @@ export interface GlobalState {
   totalEarningPower: bigint;
   rewardRate: bigint;
   rewardEndTime: bigint;
+  // rewardRate, or 0 once rewardEndTime has passed (as of the last poll)
+  activeRewardRate: bigint;
 }
 
 export function useGlobalState() {
@@ -22,11 +25,14 @@ export function useGlobalState() {
     try {
       const { staker } = getReadContracts();
       const r = await staker.getGlobalState();
+      const rewardRate = r[2] as bigint;
+      const rewardEndTime = r[3] as bigint;
       setData({
         totalStaked: r[0] as bigint,
         totalEarningPower: r[1] as bigint,
-        rewardRate: r[2] as bigint,
-        rewardEndTime: r[3] as bigint,
+        rewardRate,
+        rewardEndTime,
+        activeRewardRate: effectiveRewardRate(rewardRate, rewardEndTime, BigInt(Math.floor(Date.now() / 1000))),
       });
       setError(null);
     } catch {

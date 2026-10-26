@@ -43,6 +43,12 @@ export function dailyRate(rewardRate: bigint): bigint {
   return rewardRate * SECONDS_PER_DAY;
 }
 
+// The contract never zeroes scaledRewardRate when the distribution window
+// ends — accrual just stops at rewardEndTime. Treat the rate as 0 past it.
+export function effectiveRewardRate(rewardRate: bigint, rewardEndTime: bigint, nowSec: bigint): bigint {
+  return nowSec >= rewardEndTime ? 0n : rewardRate;
+}
+
 // Annualizes a daily reward amount as a share of total staked. Returns a
 // percentage, or null when there is nothing staked.
 export function estimateApr(dailyAmount: bigint, totalStaked: bigint): number | null {
