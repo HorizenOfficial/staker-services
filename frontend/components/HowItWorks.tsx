@@ -121,7 +121,7 @@ export function HowItWorks() {
 
       <div className="hl-card">
         <p className="hl-intro">
-          {symbol} staking is the official staking program for the Horizen chain.{" "}
+          {symbol} staking is the official Horizen staking program on Base.{" "}
           <b style={{ color: "var(--hl-navy-hover)" }}>Fully on-chain and non-custodial.</b> Your {symbol} is locked
           only inside the public staking contract — no intermediary ever takes custody — and every
           balance, reward and transaction is verifiable on the block explorer.

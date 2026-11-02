@@ -1,16 +1,16 @@
 // Runtime configuration, surfaced from the project .env via next.config.ts.
 
-// The official ZEN mainnet chain id. Any other network the app targets is
-// treated as a testnet environment (see TestnetBanner).
-export const MAINNET_CHAIN_ID = 26514;
-const TESTNET_CHAIN_ID = 2651420;
+// The Base mainnet chain id. Any other network the app targets is treated as
+// a testnet environment (see TestnetBanner).
+export const MAINNET_CHAIN_ID = 8453;
+const TESTNET_CHAIN_ID = 84532; // Base Sepolia
 
 // Human-readable network name, used when registering the chain in the wallet
-// (wallet_addEthereumChain). Hardcoded for the known Horizen chain ids.
+// (wallet_addEthereumChain). Hardcoded for the known Base chain ids.
 function chainNameFor(chainId: number): string {
-  if (chainId === MAINNET_CHAIN_ID) return "Horizen Mainchain";
-  if (chainId === TESTNET_CHAIN_ID) return "Horizen Testnet";
-  return "Horizen";
+  if (chainId === MAINNET_CHAIN_ID) return "Base";
+  if (chainId === TESTNET_CHAIN_ID) return "Base Sepolia";
+  return "Base";
 }
 
 const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "31337");
@@ -51,10 +51,6 @@ export const CONFIG = {
   // Default on: present a single aggregated position and route "stake" to
   // stakeMore on the existing deposit. Disable to expose the multi-deposit model.
   singlePosition: (process.env.NEXT_PUBLIC_SINGLE_POSITION ?? "true") !== "false",
-  // Onboarding links (dashboard hero): where to bridge ETH / ZEN in from Base.
-  // Optional — the step renders as plain (non-linked) text when unset.
-  bridgeEthUrl: process.env.NEXT_PUBLIC_BRIDGE_ETH_URL ?? "",
-  bridgeZenUrl: process.env.NEXT_PUBLIC_BRIDGE_ZEN_URL ?? "",
   // CoinGecko coin id used to price the staked token in USD ("Staked value"
   // stat). "zencash" is correct — CoinGecko kept ZEN's pre-rebrand slug (the
   // "horizen" id does not exist there; verified via /api/v3/search?query=horizen).
