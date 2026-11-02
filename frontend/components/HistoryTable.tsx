@@ -6,6 +6,7 @@ import { type ActivityType } from "@/lib/subgraph";
 import { formatToken } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
+import { useLegacyL3Position, type LegacyL3Position } from "@/lib/legacyL3Snapshot";
 
 function txUrl(hash: string): string | null {
   return CONFIG.explorerUrl ? `${CONFIG.explorerUrl.replace(/\/+$/, "")}/tx/${hash}` : null;
@@ -49,6 +50,51 @@ const th: React.CSSProperties = {
 };
 const td: React.CSSProperties = { padding: "var(--hl-space-5)", fontSize: 14.5, fontWeight: 600, color: "var(--hl-navy)" };
 
+// Amounts the wallet had on the old Horizen L3 staker, from the static
+// migration snapshot. Rendered only when the address has a non-zero entry.
+const sectionLabel: React.CSSProperties = { color: "var(--hl-grey-text)", fontSize: 14.5, marginBottom: "var(--hl-space-4)" };
+
+function LegacyL3Section({ position, symbol }: { position: LegacyL3Position; symbol: string }) {
+  // Fixed layout + equal widths so the three columns line up; headers and
+  // values centered. (On phones the stacked label/value CSS still applies.)
+  const col: React.CSSProperties = { width: "33.333%", textAlign: "center" };
+  return (
+    <section style={{ marginBottom: "var(--hl-space-8)" }}>
+      <p style={sectionLabel}>
+        Amounts staked and unclaimed rewards associated with this wallet on the old Horizen L3, at the time of the chain winddown snapshot<br/>(these
+        amounts are automatically unstacked, claimed and moved to the same recipient on Base by the migration procedure):
+      </p>
+      <div className="hl-card" style={{ padding: 0, overflowX: "auto" }}>
+        <table
+          className="hl-history-table"
+          style={{ width: "100%", borderCollapse: "collapse", minWidth: 640, tableLayout: "fixed" }}
+        >
+          <thead>
+            <tr>
+              <th className="hl-label" style={{ ...th, ...col }}>Staked</th>
+              <th className="hl-label" style={{ ...th, ...col }}>Unclaimed rewards</th>
+              <th className="hl-label" style={{ ...th, ...col }}>Snapshot</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Staked" style={{ ...td, ...col, fontVariantNumeric: "tabular-nums" }}>
+                {formatToken(position.staked, 8)} {symbol}
+              </td>
+              <td data-label="Unclaimed rewards" style={{ ...td, ...col, fontVariantNumeric: "tabular-nums" }}>
+                {formatToken(position.unclaimedRewards, 8)} {symbol}
+              </td>
+              <td data-label="Snapshot" style={{ ...td, ...col, color: "var(--hl-grey-text)", fontWeight: 400, fontSize: 14 }}>
+                {position.blockTimestamp.toLocaleString()} · block {position.blockHeight.toLocaleString("en-US")}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 function Empty({ children }: { children: React.ReactNode }) {
   return (
     <div className="hl-card" style={{ textAlign: "center", padding: "var(--hl-space-12)", color: "var(--hl-grey-text)" }}>
@@ -62,6 +108,7 @@ export function HistoryTable() {
   const active = address && isCorrectChain ? address : null;
   const { items, loading, error, canLoadMore, loadMore } = useActivity(active);
   const symbol = useTokenSymbol();
+  const legacyL3 = useLegacyL3Position(address);
 
   return (
     <div className="hl-wrap">
@@ -71,6 +118,14 @@ export function HistoryTable() {
         </h1>
         <p className="hl-page-sub">All staking operations for the connected address.</p>
       </div>
+
+      {legacyL3 && (
+        <>
+          <LegacyL3Section position={legacyL3} symbol={symbol} />
+          {/* Only needed to tell the two tables apart when the old L3 one is shown. */}
+          <p style={sectionLabel}>Activity on Base chain:</p>
+        </>
+      )}
 
       {!address ? (
         <Empty>
