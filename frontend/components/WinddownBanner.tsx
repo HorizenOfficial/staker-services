@@ -31,8 +31,8 @@ export function WinddownBanner() {
         letterSpacing: "0.04em",
       }}
     >
-      Staking rewards on the Horizen L3 ended Oct 25. Withdraw your stake, then claim rewards, and
-      bridge ZEN to Base by Nov 4, 13:00 UTC.
+      Horizen L3 has been wound down. Existing stakes and unclaimed rewards will be automatically
+      refunded on Base Mainnet.
       {" "}
       <a href={ANNOUNCEMENT_URL} target="_blank" rel="noopener noreferrer">
         Announcement
