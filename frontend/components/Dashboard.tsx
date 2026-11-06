@@ -5,7 +5,6 @@ import { useCallback, useState } from "react";
 import { useWallet } from "@/lib/wallet";
 import { useGlobalState, useUserSummary, useLiveReward } from "@/lib/useDashboard";
 import { useDeposits } from "@/lib/useDeposits";
-import { useOnboardingStatus } from "@/lib/useOnboardingStatus";
 import {
   addressUrl,
   dailyRate,
@@ -37,21 +36,6 @@ function ExplorerAddress({ address }: { address: string }) {
     <a className="hl-address hl-contract-link" href={href} target="_blank" rel="noopener noreferrer" style={style}>
       {address}
     </a>
-  );
-}
-
-// External-link arrow appended to the hero's onboarding step links.
-function ExtIcon() {
-  return (
-    <svg className="hl-ext" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-      <path
-        d="M3 10L10 3M10 3H4.5M10 3v5.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
@@ -87,8 +71,6 @@ export function Dashboard() {
     address,
     isCorrectChain,
     switchChain,
-    addNetwork,
-    addToken,
     connect,
     connecting,
     error: walletError,
@@ -107,11 +89,6 @@ export function Dashboard() {
 
   // Single-position: one deposit drives Withdraw/Claim.
   const position = CONFIG.singlePosition ? deposits[0] ?? null : null;
-
-  // Onboarding checklist: each step reads as done once the wallet has
-  // demonstrably taken it (holds ETH / holds ZEN / has ZEN staked).
-  const { hasEth, hasZen } = useOnboardingStatus(active);
-  const hasStaked = (user?.totalStaked ?? 0n) > 0n;
 
   const liveUnclaimed = useLiveReward(
     user?.totalUnclaimed ?? null,
@@ -155,64 +132,6 @@ export function Dashboard() {
           </div>
           <div className="hl-ascii-accent" aria-hidden="true">· + · + · + · + · + · + · + · + · + · + · + · +</div>
         </div>
-
-        <aside className="hl-card hl-setup" aria-label="Get set up">
-          <span className="hl-label">Add Horizen and {symbol} to your wallet</span>
-          <div className="hl-wallet-row">
-            <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={addNetwork}>
-              + Network
-            </button>
-            <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={addToken}>
-              + {symbol}
-            </button>
-          </div>
-          {walletError ? (
-            <span className="hl-label" style={{ color: "var(--hl-error)" }}>
-              {walletError}
-            </span>
-          ) : null}
-          <ol className="hl-steps">
-            <li className={hasEth ? "done" : undefined}>
-              {CONFIG.bridgeEthUrl ? (
-                <a href={CONFIG.bridgeEthUrl} target="_blank" rel="noopener noreferrer" aria-label="Bridge ETH from Base, opens bridge">
-                  Bridge ETH from Base
-                  <ExtIcon />
-                </a>
-              ) : (
-                <span>
-                  Bridge ETH from Base
-                  <ExtIcon />
-                </span>
-              )}
-            </li>
-            <li className={hasZen ? "done" : undefined}>
-              {CONFIG.bridgeZenUrl ? (
-                <a href={CONFIG.bridgeZenUrl} target="_blank" rel="noopener noreferrer" aria-label={`Bridge ${symbol} from Base, opens bridge`}>
-                  Bridge {symbol} from Base
-                  <ExtIcon />
-                </a>
-              ) : (
-                <span>
-                  Bridge {symbol} from Base
-                  <ExtIcon />
-                </span>
-              )}
-            </li>
-            <li className={hasStaked ? "done" : undefined}>
-              <a href="#position">Stake {symbol} on Horizen</a>
-            </li>
-          </ol>
-          <div className="hl-contract-line">
-            <span className="hl-label">{symbol} staking contract</span>
-            {addressUrl(CONFIG.contractStaker) ? (
-              <a className="hl-address hl-contract-link" href={addressUrl(CONFIG.contractStaker)!} target="_blank" rel="noopener noreferrer">
-                {truncateAddress(CONFIG.contractStaker)} ↗
-              </a>
-            ) : (
-              <span className="hl-address hl-contract-link">{truncateAddress(CONFIG.contractStaker)}</span>
-            )}
-          </div>
-        </aside>
       </section>
 
       {/* Protocol stats */}
@@ -273,6 +192,11 @@ export function Dashboard() {
               {connecting ? "Connecting…" : "Connect wallet"}
             </button>
           </div>
+          {walletError ? (
+            <div className="hl-alert hl-alert-error" style={{ marginTop: "var(--hl-space-5)" }}>
+              {walletError}
+            </div>
+          ) : null}
         </div>
       ) : !isCorrectChain ? (
         <div className="hl-card">
@@ -285,6 +209,11 @@ export function Dashboard() {
               Switch network
             </button>
           </div>
+          {walletError ? (
+            <div className="hl-alert hl-alert-error" style={{ marginTop: "var(--hl-space-5)" }}>
+              {walletError}
+            </div>
+          ) : null}
         </div>
       ) : CONFIG.singlePosition ? (
         <div className="hl-card">
@@ -295,10 +224,8 @@ export function Dashboard() {
           <PositionPanel
             symbol={symbol}
             position={position}
-            deposits={deposits}
             stakedBalance={user?.totalStaked ?? null}
             liveUnclaimed={liveUnclaimed}
-            onRefresh={refresh}
           />
         </div>
       ) : (
