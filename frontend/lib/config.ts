@@ -2,18 +2,23 @@
 
 import type { L3Network } from "./l3HistoryFormat";
 
-// The official ZEN mainnet chain id. Any other network the app targets is
-// treated as a testnet environment (see TestnetBanner).
-export const MAINNET_CHAIN_ID = 26514;
-const TESTNET_CHAIN_ID = 2651420;
+// The production chain id (Base mainnet). Any other network the app targets is
+// treated as a testnet environment (see TestnetBanner). Single source of truth
+// for "is this production" — don't hardcode chain ids elsewhere.
+export const MAINNET_CHAIN_ID = 8453;
+const BASE_SEPOLIA_CHAIN_ID = 84532;
+// Retired Horizen L3 chains: still named for wallet registration, and the L3
+// mainnet id still maps to the mainnet L3 history snapshot.
+const L3_MAINNET_CHAIN_ID = 26514;
+const L3_TESTNET_CHAIN_ID = 2651420;
 
 // Human-readable network name, used when registering the chain in the wallet
 // (wallet_addEthereumChain). Hardcoded for the known Base / Horizen chain ids.
 function chainNameFor(chainId: number): string {
-  if (chainId === 8453) return "Base";
-  if (chainId === 84532) return "Base Sepolia";
-  if (chainId === MAINNET_CHAIN_ID) return "Horizen Mainchain";
-  if (chainId === TESTNET_CHAIN_ID) return "Horizen Testnet";
+  if (chainId === MAINNET_CHAIN_ID) return "Base";
+  if (chainId === BASE_SEPOLIA_CHAIN_ID) return "Base Sepolia";
+  if (chainId === L3_MAINNET_CHAIN_ID) return "Horizen Mainchain";
+  if (chainId === L3_TESTNET_CHAIN_ID) return "Horizen Testnet";
   return "Horizen";
 }
 
@@ -21,9 +26,9 @@ const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "31337");
 
 // Which Horizen L3 staking-history snapshot (public/l3-history/<network>/) the
 // History page reads, derived from the target chain: mainnet for the production
-// chains (Base, ZEN mainnet), testnet for anything else (testnet, devnet).
+// chains (Base mainnet, retired L3 mainnet), testnet for anything else (testnet, devnet).
 function l3HistoryNetworkFor(chainId: number): L3Network {
-  return chainId === 8453 || chainId === MAINNET_CHAIN_ID ? "mainnet" : "testnet";
+  return chainId === MAINNET_CHAIN_ID || chainId === L3_MAINNET_CHAIN_ID ? "mainnet" : "testnet";
 }
 const NATIVE_CURRENCY = process.env.NEXT_PUBLIC_NATIVE_CURRENCY ?? "ETH";
 

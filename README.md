@@ -51,12 +51,12 @@ Set these in the Cloudflare Pages project (the build inlines them into the
 bundle). Cloudflare lets you use **different values per environment**
 (Production vs Preview) — e.g. mainnet on the production branch, testnet on
 previews. The "testnet environment" banner shows automatically whenever
-`CHAIN_ID` is not the ZEN mainnet id (`26514`).
+`CHAIN_ID` is not the Base mainnet id (`8453`).
 
 | Variable | Description | Example (devnet) |
 |---|---|---|
 | `RPC` | JSON-RPC endpoint — **public HTTPS, CORS-enabled** | `https://rpc.example.com` |
-| `CHAIN_ID` | Target chain id (`26514` = ZEN mainnet) | `26514` |
+| `CHAIN_ID` | Target chain id (`8453` = Base mainnet) | `8453` |
 | `CONTRACT_STAKER` | Staker contract address | `0x…` |
 | `CONTRACT_TOKEN` | ZEN token (ERC-20) address | `0x…` |
 | `SUBGRAPH` | Public subgraph GraphQL endpoint | `https://…/subgraphs/name/zen-staker` |

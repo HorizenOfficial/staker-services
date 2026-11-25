@@ -72,9 +72,9 @@ This is also why `tsconfig.json` enables `allowImportingTsExtensions`.
 ## Frontend
 
 - **Which network.** The folder is always derived from `CHAIN_ID` (`CONFIG.l3HistoryNetwork` in
-  `lib/config.ts`): 8453 (Base) and 26514 (ZEN mainnet) mean mainnet, anything else (testnets, devnet)
-  means testnet. There is no separate setting. Some addresses appear in both snapshots, so a new
-  production chain id must be added to that mapping.
+  `lib/config.ts`): `MAINNET_CHAIN_ID` (8453, Base) and the retired L3 mainnet (26514) mean mainnet,
+  anything else (testnets, devnet) means testnet. There is no separate setting. The production chain id
+  is defined once (`MAINNET_CHAIN_ID`), so the testnet banner and this mapping stay in sync.
 - **Loading.** `lib/l3History.ts` (`useL3History`) fetches `<address>.json`. A 404, a response that isn't
   JSON, or a file for a different owner or network all count as "no L3 history".
 - **Display.** `components/L3HistorySection.tsx` is a card at the bottom of the History page, shown only

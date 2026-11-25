@@ -3,7 +3,7 @@
 import { CONFIG, MAINNET_CHAIN_ID } from "@/lib/config";
 
 // Full-width strip under the top bar, shown whenever the app targets any
-// network other than ZEN mainnet. Based on the configured chain id (the network
+// network other than Base mainnet (MAINNET_CHAIN_ID). Based on the configured chain id (the network
 // the dApp talks to), so it is correct even before a wallet is connected.
 export function TestnetBanner() {
   if (CONFIG.chainId === MAINNET_CHAIN_ID) return null;
