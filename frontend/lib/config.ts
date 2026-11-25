@@ -1,5 +1,7 @@
 // Runtime configuration, surfaced from the project .env via next.config.ts.
 
+import type { L3Network } from "./l3HistoryFormat";
+
 // The official ZEN mainnet chain id. Any other network the app targets is
 // treated as a testnet environment (see TestnetBanner).
 export const MAINNET_CHAIN_ID = 26514;
@@ -16,6 +18,13 @@ function chainNameFor(chainId: number): string {
 }
 
 const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "31337");
+
+// Which Horizen L3 staking-history snapshot (public/l3-history/<network>/) the
+// History page reads, derived from the target chain: mainnet for the production
+// chains (Base, ZEN mainnet), testnet for anything else (testnet, devnet).
+function l3HistoryNetworkFor(chainId: number): L3Network {
+  return chainId === 8453 || chainId === MAINNET_CHAIN_ID ? "mainnet" : "testnet";
+}
 const NATIVE_CURRENCY = process.env.NEXT_PUBLIC_NATIVE_CURRENCY ?? "ETH";
 
 if (process.env.NODE_ENV === "production") {
@@ -62,6 +71,9 @@ export const CONFIG = {
   // Leave blank to disable the price fetch entirely, e.g. when the deployed
   // token isn't real ZEN (a devnet mock).
   coingeckoId: process.env.NEXT_PUBLIC_COINGECKO_ID ?? "zencash",
+  // Horizen L3 staking-history snapshot shown at the bottom of the History
+  // page, derived from CHAIN_ID. See dataimport/README.md.
+  l3HistoryNetwork: l3HistoryNetworkFor(chainId),
   // Block gap above which the subgraph is considered behind the chain head
   // (useSubgraphHealth). A couple of blocks of lag is normal; only flag a
   // meaningful gap to avoid false positives.

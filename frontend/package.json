@@ -16,7 +16,8 @@
     "serve": "npx serve out",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "l3-history": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON dataimport/generate.ts"
   },
   "dependencies": {
     "ethers": "6.17.0",

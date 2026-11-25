@@ -6,6 +6,7 @@ import { type ActivityType } from "@/lib/subgraph";
 import { formatToken } from "@/lib/format";
 import { CONFIG } from "@/lib/config";
 import { useTokenSymbol } from "@/lib/tokenSymbol";
+import { L3HistorySection } from "./L3HistorySection";
 
 function txUrl(hash: string): string | null {
   return CONFIG.explorerUrl ? `${CONFIG.explorerUrl.replace(/\/+$/, "")}/tx/${hash}` : null;
@@ -145,6 +146,10 @@ export function HistoryTable() {
           )}
         </>
       )}
+
+      {/* Static snapshot of the retired L3 staking contract; independent of the
+          current chain, so shown whenever a wallet is connected. */}
+      <L3HistorySection address={address} />
     </div>
   );
 }
