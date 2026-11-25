@@ -108,8 +108,8 @@ export function Dashboard() {
   const position = CONFIG.singlePosition ? deposits[0] ?? null : null;
 
   // Onboarding checklist: each step reads as done once the wallet has
-  // demonstrably taken it (holds ETH / holds ZEN / has ZEN staked).
-  const { hasEth, hasZen } = useOnboardingStatus(active);
+  // demonstrably taken it (holds ETH on Base / has ZEN staked).
+  const { hasEth } = useOnboardingStatus(active);
   const hasStaked = (user?.totalStaked ?? 0n) > 0n;
 
   const liveUnclaimed = useLiveReward(
@@ -132,7 +132,7 @@ export function Dashboard() {
         <div>
           <h1>
             Stake <em>{symbol}</em>.<br />
-            Earn on <em>Horizen</em>.
+            Earn on <em>Base</em>.
           </h1>
           <p style={{ color: "var(--hl-grey-text)", fontSize: 16.5, maxWidth: "52ch", marginBottom: "var(--hl-space-6)" }}>
             {symbol} staking is the hub for participation in the {symbol} token economy — with a single
@@ -154,7 +154,7 @@ export function Dashboard() {
         </div>
 
         <aside className="hl-card hl-setup" aria-label="Get set up">
-          <span className="hl-label">Add Horizen and {symbol} to your wallet</span>
+          <span className="hl-label">Add Base and {symbol} to your wallet</span>
           <div className="hl-wallet-row">
             <button className="hl-btn hl-btn-ghost hl-btn-sm" onClick={addNetwork}>
               + Network
@@ -171,32 +171,19 @@ export function Dashboard() {
           <ol className="hl-steps">
             <li className={hasEth ? "done" : undefined}>
               {CONFIG.bridgeEthUrl ? (
-                <a href={CONFIG.bridgeEthUrl} target="_blank" rel="noopener noreferrer" aria-label="Bridge ETH from Base, opens bridge">
-                  Bridge ETH from Base
+                <a href={CONFIG.bridgeEthUrl} target="_blank" rel="noopener noreferrer" aria-label="Bridge ETH from Ethereum, opens bridge">
+                  Bridge ETH from Ethereum
                   <ExtIcon />
                 </a>
               ) : (
                 <span>
-                  Bridge ETH from Base
-                  <ExtIcon />
-                </span>
-              )}
-            </li>
-            <li className={hasZen ? "done" : undefined}>
-              {CONFIG.bridgeZenUrl ? (
-                <a href={CONFIG.bridgeZenUrl} target="_blank" rel="noopener noreferrer" aria-label={`Bridge ${symbol} from Base, opens bridge`}>
-                  Bridge {symbol} from Base
-                  <ExtIcon />
-                </a>
-              ) : (
-                <span>
-                  Bridge {symbol} from Base
+                  Bridge ETH from Ethereum
                   <ExtIcon />
                 </span>
               )}
             </li>
             <li className={hasStaked ? "done" : undefined}>
-              <a href="#position">Stake {symbol} on Horizen</a>
+              <a href="#position">Stake {symbol} on Base</a>
             </li>
           </ol>
           <div className="hl-contract-line">

@@ -6,8 +6,10 @@ export const MAINNET_CHAIN_ID = 26514;
 const TESTNET_CHAIN_ID = 2651420;
 
 // Human-readable network name, used when registering the chain in the wallet
-// (wallet_addEthereumChain). Hardcoded for the known Horizen chain ids.
+// (wallet_addEthereumChain). Hardcoded for the known Base / Horizen chain ids.
 function chainNameFor(chainId: number): string {
+  if (chainId === 8453) return "Base";
+  if (chainId === 84532) return "Base Sepolia";
   if (chainId === MAINNET_CHAIN_ID) return "Horizen Mainchain";
   if (chainId === TESTNET_CHAIN_ID) return "Horizen Testnet";
   return "Horizen";
@@ -51,10 +53,9 @@ export const CONFIG = {
   // Default on: present a single aggregated position and route "stake" to
   // stakeMore on the existing deposit. Disable to expose the multi-deposit model.
   singlePosition: (process.env.NEXT_PUBLIC_SINGLE_POSITION ?? "true") !== "false",
-  // Onboarding links (dashboard hero): where to bridge ETH / ZEN in from Base.
+  // Onboarding link (dashboard hero): where to bridge ETH from Ethereum to Base.
   // Optional — the step renders as plain (non-linked) text when unset.
   bridgeEthUrl: process.env.NEXT_PUBLIC_BRIDGE_ETH_URL ?? "",
-  bridgeZenUrl: process.env.NEXT_PUBLIC_BRIDGE_ZEN_URL ?? "",
   // CoinGecko coin id used to price the staked token in USD ("Staked value"
   // stat). "zencash" is correct — CoinGecko kept ZEN's pre-rebrand slug (the
   // "horizen" id does not exist there; verified via /api/v3/search?query=horizen).

@@ -8,8 +8,7 @@ const SOURCES: { label: string; status: SourceStatus }[] = [
   { label: "Horizen DAO - ZEN LP earnings", status: "Live" },
   { label: "Protocol & app fee sharing", status: "Onboarding" },
   { label: "zkVerify node emissions", status: "Live" },
-  { label: "Vela confidential compute", status: "In development" },
-  { label: "Horizen L3 sequencer fees", status: "Live" },
+  { label: "Vela confidential compute", status: "In development" }
 ];
 
 const ZENIP_URL =
