@@ -8,7 +8,7 @@ import { CONFIG } from "./config";
 import { decodeStakeError } from "./errors";
 import type { DepositDetail } from "./useDeposits";
 
-export type ActionKind = "claim" | "claimAll" | "stakeMore" | "withdraw";
+export type ActionKind = "claim" | "claimAll" | "stakeMore" | "withdraw" | "withdrawAll";
 
 // A single step of a multi-tx action. Each on-chain tx is two steps: a
 // wallet-confirm followed by waiting for the mined confirmation.
@@ -107,6 +107,125 @@ export function useDepositActions() {
     [require]
   );
 
+  // Bypassing the UI (staking directly against the contract) can leave a
+  // wallet with more than one deposit even in single-position mode. Mirrors
+  // claimAll: withdraws every deposit's full balance in one flow instead of
+  // making the user withdraw each one individually.
+  const withdrawAll = useCallback(
+    async (deposits: DepositDetail[], claimRewards: boolean): Promise<boolean> => {
+      const withdrawable = deposits.filter((d) => d.balance > 0n);
+      if (withdrawable.length === 0) return true;
+      // Withdraw is 2 steps per deposit; an optional reward claim adds 2 more
+      // for deposits that actually have unclaimed rewards.
+      const total = withdrawable.reduce((n, d) => n + (claimRewards && d.unclaimedRewards > 0n ? 4 : 2), 0);
+      try {
+        const { staker } = require();
+        let n = 0;
+        for (let i = 0; i < withdrawable.length; i++) {
+          const d = withdrawable[i];
+          const pos = `withdrawal ${i + 1}/${withdrawable.length}`;
+          setState({
+            kind: "withdrawAll",
+            target: d.depositId,
+            step: { n: ++n, total, label: `Confirm ${pos} in your wallet` },
+            error: null,
+          });
+          const tx = await staker.withdraw(d.depositId, d.balance);
+          setState({
+            kind: "withdrawAll",
+            target: d.depositId,
+            step: { n: ++n, total, label: `Waiting for ${pos} to confirm` },
+            error: null,
+          });
+          await tx.wait();
+          if (claimRewards && d.unclaimedRewards > 0n) {
+            const claimPos = `claim ${i + 1}/${withdrawable.length}`;
+            setState({
+              kind: "withdrawAll",
+              target: d.depositId,
+              step: { n: ++n, total, label: `Confirm ${claimPos} in your wallet` },
+              error: null,
+            });
+            const claimTx = await staker.claimReward(d.depositId);
+            setState({
+              kind: "withdrawAll",
+              target: d.depositId,
+              step: { n: ++n, total, label: `Waiting for ${claimPos} to confirm` },
+              error: null,
+            });
+            await claimTx.wait();
+          }
+        }
+        setState(IDLE);
+        return true;
+      } catch (e) {
+        setState({ kind: "withdrawAll", target: "all", step: null, error: decodeStakeError(e) });
+        return false;
+      }
+    },
+    [require]
+  );
+
+  // Withdraws a user-entered amount that may exceed any single deposit's
+  // balance. Drains the largest deposit first, then cascades into the next
+  // largest, and so on, issuing one withdraw tx per deposit touched — so a
+  // wallet that ended up with more than one deposit (e.g. by staking directly
+  // against the contract, bypassing stakeMore) can still withdraw an
+  // arbitrary amount from the single aggregated position view.
+  const withdrawAmount = useCallback(
+    async (deposits: DepositDetail[], amount: bigint, claimRewards: boolean): Promise<boolean> => {
+      const sorted = [...deposits]
+        .filter((d) => d.balance > 0n)
+        .sort((a, b) => (a.balance < b.balance ? 1 : a.balance > b.balance ? -1 : 0));
+
+      const plan: { deposit: DepositDetail; take: bigint }[] = [];
+      let remaining = amount;
+      for (const d of sorted) {
+        if (remaining <= 0n) break;
+        const take = remaining < d.balance ? remaining : d.balance;
+        plan.push({ deposit: d, take });
+        remaining -= take;
+      }
+      if (plan.length === 0) return true;
+
+      // Claim only for deposits this withdrawal actually touches — matching
+      // the single-deposit behaviour of claiming right after withdrawing from
+      // that same deposit, extended to every deposit drained by the cascade.
+      const claimTargets = claimRewards ? plan.filter((p) => p.deposit.unclaimedRewards > 0n) : [];
+      const total = plan.length * 2 + claimTargets.length * 2;
+
+      let current: bigint = plan[0].deposit.depositId;
+      try {
+        const { staker } = require();
+        let n = 0;
+        for (let i = 0; i < plan.length; i++) {
+          const { deposit, take } = plan[i];
+          current = deposit.depositId;
+          const pos = plan.length > 1 ? `withdrawal ${i + 1}/${plan.length}` : "withdrawal";
+          setState({ kind: "withdraw", target: deposit.depositId, step: { n: ++n, total, label: `Confirm the ${pos} in your wallet` }, error: null });
+          const tx = await staker.withdraw(deposit.depositId, take);
+          setState({ kind: "withdraw", target: deposit.depositId, step: { n: ++n, total, label: `Waiting for the ${pos} to confirm` }, error: null });
+          await tx.wait();
+        }
+        for (let i = 0; i < claimTargets.length; i++) {
+          const d = claimTargets[i].deposit;
+          current = d.depositId;
+          const pos = claimTargets.length > 1 ? `claim ${i + 1}/${claimTargets.length}` : "claim";
+          setState({ kind: "withdraw", target: d.depositId, step: { n: ++n, total, label: `Confirm the ${pos} in your wallet` }, error: null });
+          const tx = await staker.claimReward(d.depositId);
+          setState({ kind: "withdraw", target: d.depositId, step: { n: ++n, total, label: `Waiting for the ${pos} to confirm` }, error: null });
+          await tx.wait();
+        }
+        setState(IDLE);
+        return true;
+      } catch (e) {
+        setState({ kind: "withdraw", target: current, step: null, error: decodeStakeError(e) });
+        return false;
+      }
+    },
+    [require]
+  );
+
   const stakeMore = useCallback(
     async (depositId: bigint, amountStr: string): Promise<boolean> => {
       try {
@@ -185,5 +304,5 @@ export function useDepositActions() {
 
   const busy = state.step !== null;
 
-  return { state, busy, claim, claimAll, stakeMore, withdraw, reset };
+  return { state, busy, claim, claimAll, stakeMore, withdraw, withdrawAmount, withdrawAll, reset };
 }

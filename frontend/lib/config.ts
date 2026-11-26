@@ -42,6 +42,8 @@ export const CONFIG = {
   contractToken: process.env.NEXT_PUBLIC_CONTRACT_TOKEN as string,
   subgraph: process.env.NEXT_PUBLIC_SUBGRAPH as string,
   explorerUrl: process.env.NEXT_PUBLIC_EXPLORER_URL ?? "",
+  // Terms & Conditions link (footer). Defaults to the Horizen staking terms when unset.
+  termsUrl: process.env.NEXT_PUBLIC_TERMS_URL ?? "https://horizen.io/staking-terms",
   // Used to register the network in the wallet (wallet_addEthereumChain) when it
   // isn't known yet, so "switch network" can succeed instead of erroring 4902.
   chainName: chainNameFor(chainId),
@@ -59,4 +61,17 @@ export const CONFIG = {
   // Leave blank to disable the price fetch entirely, e.g. when the deployed
   // token isn't real ZEN (a devnet mock).
   coingeckoId: process.env.NEXT_PUBLIC_COINGECKO_ID ?? "zencash",
+  // Block gap above which the subgraph is considered behind the chain head
+  // (useSubgraphHealth). A couple of blocks of lag is normal; only flag a
+  // meaningful gap to avoid false positives.
+  behindThreshold: Number(process.env.NEXT_PUBLIC_BEHIND_THRESHOLD ?? "30"),
+  // Consecutive over-threshold checks required before surfacing the "stale"
+  // banner — absorbs transient lag instead of flashing the banner on a single
+  // slow poll.
+  behindThresholdAttempt: Number(process.env.NEXT_PUBLIC_BEHIND_THRESHOLD_ATTEMPT ?? "4"),
+  // Seconds between subgraph health checks (also the retry cadence while
+  // over-threshold and not yet at behindThresholdAttempt).
+  behindThresholdAttemptInterval: Number(
+    process.env.NEXT_PUBLIC_BEHIND_THRESHOLD_ATTEMPT_INTERVAL ?? "30"
+  ),
 } as const;
