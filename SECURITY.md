@@ -9,8 +9,7 @@ A bug bounty program covering the Horizen staking system runs on
 [Immunefi](https://immunefi.com/bug-bounty/horizen/information).
 
 
-For reports outside the bounty scope — or before the program page is live —
-use GitHub's private vulnerability reporting on this repository
+For reports outside the bounty scope use GitHub's private vulnerability reporting on this repository
 (*Security → Report a vulnerability*).
 
 ## Scope
@@ -40,5 +39,5 @@ program page wins.
 - Subgraph staleness or unavailability is surfaced to users by a health banner
   by design, and write paths never depend on the subgraph — data staleness
   alone is not a vulnerability.
-- Third-party infrastructure (Base, Caldera rollup infra, LayerZero, Goldsky,
+- Third-party infrastructure (Base, LayerZero, Goldsky,
   Cloudflare Pages, CoinGecko) is out of scope for this repository.
