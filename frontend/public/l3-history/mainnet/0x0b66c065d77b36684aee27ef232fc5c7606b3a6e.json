@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "chain": "Horizen L3",
+    "net": "mainnet",
+    "staker": "0x6bf7cf29a8bce11aa62cf593d165c244fa4d3e31",
+    "deployBlock": 21317419,
+    "deployTime": "2026-07-22 10:05:02",
+    "E": 30504979,
+    "ETime": "2026-11-05 18:11:02",
+    "sourceGenerated": "2026-11-20T09:21:13Z",
+    "conventions": "amounts are exact decimal ZEN (18 decimals, trailing zeros dropped); times are UTC; a daily row is the state at the last block of that UTC day (at E on the last day); rewards_accrued_zen = unclaimed at the end of the day - unclaimed at the end of the previous day + claimed during the day; an empty cell / null means the column does not apply to the row type",
+    "windDown": "The stake and the unclaimed rewards at the chain's final block were paid out on Base by the wind-down distribution of 2026-11-20 (Base transaction 0x6a5373e35e8e328c667fd3ea6ac259cf0e41ba5c88fae52667ae37e1ec45219a), to the owner's own address unless it was held back or redirected. Those payments are Base transactions and are not rows of these files."
+  },
+  "owner": "0x0b66c065d77b36684aee27ef232fc5c7606b3a6e",
+  "summary": {
+    "positions": 1,
+    "depositTxs": 1,
+    "withdrawTxs": 1,
+    "claimTxs": 0,
+    "depositedZen": "2",
+    "withdrawnZen": "2",
+    "rewardsEarnedZen": "0",
+    "rewardsClaimedZen": "0",
+    "stakedAtCloseZen": "0",
+    "unclaimedAtCloseZen": "0",
+    "firstDay": "2026-07-27",
+    "lastDay": "2026-07-27"
+  },
+  "deposits": {
+    "81": {
+      "createdBlock": 21724402,
+      "createdTime": "2026-07-27 03:08:05",
+      "depositedZen": "2",
+      "withdrawnZen": "2",
+      "rewardsAccruedZen": "0",
+      "rewardsClaimedZen": "0",
+      "stakedAtEZen": "0",
+      "unclaimedAtEZen": "0"
+    }
+  },
+  "columns": [
+    "date_utc",
+    "timestamp_utc",
+    "row_type",
+    "owner",
+    "deposit_id",
+    "staked_change_zen",
+    "rewards_accrued_zen",
+    "rewards_claimed_zen",
+    "staked_balance_zen",
+    "unclaimed_rewards_zen",
+    "rewards_cumulative_zen",
+    "paid_to",
+    "block",
+    "tx_hash"
+  ],
+  "rows": [
+    ["2026-07-27","2026-07-27 03:08:05","deposit","0x0b66c065d77b36684aee27ef232fc5c7606b3a6e",81,"2",null,null,"2",null,null,null,21724402,"0x782c896345bfc02fef09d67432f44a3f3484188e5ac1d048c7a1afa7dca706ce"],
+    ["2026-07-27","2026-07-27 03:08:37","withdraw","0x0b66c065d77b36684aee27ef232fc5c7606b3a6e",81,"-2",null,null,"0",null,null,null,21724434,"0x6d64085cace0c0ec00a808a6795d9cfb9f2b5aace926bcd8360a7b3b0eecc4c2"]
+  ]
+}

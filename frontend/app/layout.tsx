@@ -23,7 +23,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Horizen — Stake ZEN. Earn on Horizen.",
+  title: "Horizen — Stake ZEN. Earn on Base.",
   description: "Stake ZEN to earn ZEN rewards on the Horizen staking program.",
 };
 

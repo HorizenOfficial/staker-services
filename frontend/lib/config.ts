@@ -1,19 +1,35 @@
 // Runtime configuration, surfaced from the project .env via next.config.ts.
 
-// The official ZEN mainnet chain id. Any other network the app targets is
-// treated as a testnet environment (see TestnetBanner).
-export const MAINNET_CHAIN_ID = 26514;
-const TESTNET_CHAIN_ID = 2651420;
+import type { L3Network } from "./l3HistoryFormat";
+
+// The production chain id (Base mainnet). Any other network the app targets is
+// treated as a testnet environment (see TestnetBanner). Single source of truth
+// for "is this production" — don't hardcode chain ids elsewhere.
+export const MAINNET_CHAIN_ID = 8453;
+const BASE_SEPOLIA_CHAIN_ID = 84532;
+// Retired Horizen L3 chains: still named for wallet registration, and the L3
+// mainnet id still maps to the mainnet L3 history snapshot.
+const L3_MAINNET_CHAIN_ID = 26514;
+const L3_TESTNET_CHAIN_ID = 2651420;
 
 // Human-readable network name, used when registering the chain in the wallet
-// (wallet_addEthereumChain). Hardcoded for the known Horizen chain ids.
+// (wallet_addEthereumChain). Hardcoded for the known Base / Horizen chain ids.
 function chainNameFor(chainId: number): string {
-  if (chainId === MAINNET_CHAIN_ID) return "Horizen Mainchain";
-  if (chainId === TESTNET_CHAIN_ID) return "Horizen Testnet";
+  if (chainId === MAINNET_CHAIN_ID) return "Base";
+  if (chainId === BASE_SEPOLIA_CHAIN_ID) return "Base Sepolia";
+  if (chainId === L3_MAINNET_CHAIN_ID) return "Horizen Mainchain";
+  if (chainId === L3_TESTNET_CHAIN_ID) return "Horizen Testnet";
   return "Horizen";
 }
 
 const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "31337");
+
+// Which Horizen L3 staking-history snapshot (public/l3-history/<network>/) the
+// History page reads, derived from the target chain: mainnet for the production
+// chains (Base mainnet, retired L3 mainnet), testnet for anything else (testnet, devnet).
+function l3HistoryNetworkFor(chainId: number): L3Network {
+  return chainId === MAINNET_CHAIN_ID || chainId === L3_MAINNET_CHAIN_ID ? "mainnet" : "testnet";
+}
 const NATIVE_CURRENCY = process.env.NEXT_PUBLIC_NATIVE_CURRENCY ?? "ETH";
 
 if (process.env.NODE_ENV === "production") {
@@ -51,16 +67,18 @@ export const CONFIG = {
   // Default on: present a single aggregated position and route "stake" to
   // stakeMore on the existing deposit. Disable to expose the multi-deposit model.
   singlePosition: (process.env.NEXT_PUBLIC_SINGLE_POSITION ?? "true") !== "false",
-  // Onboarding links (dashboard hero): where to bridge ETH / ZEN in from Base.
+  // Onboarding link (dashboard hero): where to bridge ETH from Ethereum to Base.
   // Optional — the step renders as plain (non-linked) text when unset.
   bridgeEthUrl: process.env.NEXT_PUBLIC_BRIDGE_ETH_URL ?? "",
-  bridgeZenUrl: process.env.NEXT_PUBLIC_BRIDGE_ZEN_URL ?? "",
   // CoinGecko coin id used to price the staked token in USD ("Staked value"
   // stat). "zencash" is correct — CoinGecko kept ZEN's pre-rebrand slug (the
   // "horizen" id does not exist there; verified via /api/v3/search?query=horizen).
   // Leave blank to disable the price fetch entirely, e.g. when the deployed
   // token isn't real ZEN (a devnet mock).
   coingeckoId: process.env.NEXT_PUBLIC_COINGECKO_ID ?? "zencash",
+  // Horizen L3 staking-history snapshot shown at the bottom of the History
+  // page, derived from CHAIN_ID. See dataimport/README.md.
+  l3HistoryNetwork: l3HistoryNetworkFor(chainId),
   // Block gap above which the subgraph is considered behind the chain head
   // (useSubgraphHealth). A couple of blocks of lag is normal; only flag a
   // meaningful gap to avoid false positives.

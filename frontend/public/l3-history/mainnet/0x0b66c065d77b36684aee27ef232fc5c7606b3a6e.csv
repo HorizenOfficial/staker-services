@@ -1,0 +1,3 @@
+date_utc,timestamp_utc,row_type,owner,deposit_id,staked_change_zen,rewards_accrued_zen,rewards_claimed_zen,staked_balance_zen,unclaimed_rewards_zen,rewards_cumulative_zen,paid_to,block,tx_hash
+2026-07-27,2026-07-27 03:08:05,deposit,0x0b66c065d77b36684aee27ef232fc5c7606b3a6e,81,2,,,2,,,,21724402,0x782c896345bfc02fef09d67432f44a3f3484188e5ac1d048c7a1afa7dca706ce
+2026-07-27,2026-07-27 03:08:37,withdraw,0x0b66c065d77b36684aee27ef232fc5c7606b3a6e,81,-2,,,0,,,,21724434,0x6d64085cace0c0ec00a808a6795d9cfb9f2b5aace926bcd8360a7b3b0eecc4c2

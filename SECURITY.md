@@ -6,28 +6,13 @@
 discussions, or pull requests.**
 
 A bug bounty program covering the Horizen staking system runs on
-[Immunefi](https://immunefi.com/).
+[Immunefi](https://immunefi.com/bug-bounty/horizen/information).
 
-<!-- TODO: replace with the public Immunefi program link once published -->
 
-For reports outside the bounty scope — or before the program page is live —
-use GitHub's private vulnerability reporting on this repository
+For reports outside the bounty scope use GitHub's private vulnerability reporting on this repository
 (*Security → Report a vulnerability*).
 
 ## Scope
-
-| Period | Scope |
-|---|---|
-| Jul 15 – Jul 27, 2026 | **Testnet** deployment (Horizen Testnet, chain ID 2651420) |
-| From Jul 27, 2026 | Extended to the **mainnet** deployment (Horizen, chain ID 26514) |
-
-- **Staking dApp** — this repository (`frontend/`), deployed at
-  https://staking-testnet.horizen.io
-- **Staking contracts & subgraph** — https://github.com/HorizenOfficial/staker
-- **In-scope testnet contract addresses**:
-  - ZenStaker: [`0x6BF7CF29a8bcE11Aa62Cf593d165C244fA4d3E31`](https://horizen-testnet.explorer.caldera.xyz/address/0x6BF7CF29a8bcE11Aa62Cf593d165C244fA4d3E31)
-  - RewardAccumulator: [`0x06f5555fee73EDdc385b6d76FE00DB2D96ccDaE8`](https://horizen-testnet.explorer.caldera.xyz/address/0x06f5555fee73EDdc385b6d76FE00DB2D96ccDaE8)
-  - tZEN token: [`0xb06EC4ce262D8dbDc24Fac87479A49A7DC4cFb87`](https://horizen-testnet.explorer.caldera.xyz/address/0xb06EC4ce262D8dbDc24Fac87479A49A7DC4cFb87)
 
 The authoritative scope, impacts, rewards, and rules of engagement are defined
 on the Immunefi program page; where this file and the program page differ, the
@@ -54,5 +39,5 @@ program page wins.
 - Subgraph staleness or unavailability is surfaced to users by a health banner
   by design, and write paths never depend on the subgraph — data staleness
   alone is not a vulnerability.
-- Third-party infrastructure (Base, Caldera rollup infra, LayerZero, Goldsky,
+- Third-party infrastructure (Base, LayerZero, Goldsky,
   Cloudflare Pages, CoinGecko) is out of scope for this repository.

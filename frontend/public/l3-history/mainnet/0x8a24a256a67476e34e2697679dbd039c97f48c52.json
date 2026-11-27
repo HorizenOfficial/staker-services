@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "chain": "Horizen L3",
+    "net": "mainnet",
+    "staker": "0x6bf7cf29a8bce11aa62cf593d165c244fa4d3e31",
+    "deployBlock": 21317419,
+    "deployTime": "2026-07-22 10:05:02",
+    "E": 30504979,
+    "ETime": "2026-11-05 18:11:02",
+    "sourceGenerated": "2026-11-20T09:21:13Z",
+    "conventions": "amounts are exact decimal ZEN (18 decimals, trailing zeros dropped); times are UTC; a daily row is the state at the last block of that UTC day (at E on the last day); rewards_accrued_zen = unclaimed at the end of the day - unclaimed at the end of the previous day + claimed during the day; an empty cell / null means the column does not apply to the row type",
+    "windDown": "The stake and the unclaimed rewards at the chain's final block were paid out on Base by the wind-down distribution of 2026-11-20 (Base transaction 0x6a5373e35e8e328c667fd3ea6ac259cf0e41ba5c88fae52667ae37e1ec45219a), to the owner's own address unless it was held back or redirected. Those payments are Base transactions and are not rows of these files."
+  },
+  "owner": "0x8a24a256a67476e34e2697679dbd039c97f48c52",
+  "summary": {
+    "positions": 1,
+    "depositTxs": 2,
+    "withdrawTxs": 1,
+    "claimTxs": 1,
+    "depositedZen": "200.375627",
+    "withdrawnZen": "200.375627",
+    "rewardsEarnedZen": "0.343812322331521545",
+    "rewardsClaimedZen": "0.343812322331521545",
+    "stakedAtCloseZen": "0",
+    "unclaimedAtCloseZen": "0",
+    "firstDay": "2026-07-28",
+    "lastDay": "2026-08-02"
+  },
+  "deposits": {
+    "137": {
+      "createdBlock": 21863067,
+      "createdTime": "2026-07-28 17:39:10",
+      "depositedZen": "200.375627",
+      "withdrawnZen": "200.375627",
+      "rewardsAccruedZen": "0.343812322331521545",
+      "rewardsClaimedZen": "0.343812322331521545",
+      "stakedAtEZen": "0",
+      "unclaimedAtEZen": "0"
+    }
+  },
+  "columns": [
+    "date_utc",
+    "timestamp_utc",
+    "row_type",
+    "owner",
+    "deposit_id",
+    "staked_change_zen",
+    "rewards_accrued_zen",
+    "rewards_claimed_zen",
+    "staked_balance_zen",
+    "unclaimed_rewards_zen",
+    "rewards_cumulative_zen",
+    "paid_to",
+    "block",
+    "tx_hash"
+  ],
+  "rows": [
+    ["2026-07-28","2026-07-28 17:39:10","deposit","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,"100.311639",null,null,"100.311639",null,null,null,21863067,"0x7ce27a08f958fb24738749de6a3ba51f17bf6a3aa7b5291698fc4ab639a02757"],
+    ["2026-07-28","2026-07-28 18:40:29","deposit","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,"100.063988",null,null,"200.375627",null,null,null,21866746,"0xc766ce3b1cd11c7b15f12b5e0861413dcdc16491664d0cc3d8065632b998e0b2"],
+    ["2026-07-28","2026-07-28 23:59:59","daily","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,null,"0.020346590164821872",null,"200.375627","0.020346590164821872","0.020346590164821872",null,21885916,null],
+    ["2026-07-29","2026-07-29 23:59:59","daily","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,null,"0.078313681534472433",null,"200.375627","0.098660271699294305","0.098660271699294305",null,21972316,null],
+    ["2026-07-30","2026-07-30 23:59:59","daily","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,null,"0.075722184874848953",null,"200.375627","0.174382456574143258","0.174382456574143258",null,22058716,null],
+    ["2026-07-31","2026-07-31 23:59:59","daily","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,null,"0.072869197022602545",null,"200.375627","0.247251653596745803","0.247251653596745803",null,22145116,null],
+    ["2026-08-01","2026-08-01 23:59:59","daily","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,null,"0.069243599937866711",null,"200.375627","0.316495253534612514","0.316495253534612514",null,22231516,null],
+    ["2026-08-02","2026-08-02 09:34:20","withdraw","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,"-200.375627",null,null,"0",null,null,null,22265977,"0x33391d9519c4a469450abaaa71542286beffc473b42ad70a29755476f0fed311"],
+    ["2026-08-02","2026-08-02 09:34:43","claim","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,null,null,"0.343812322331521545",null,null,null,"0x8a24a256a67476e34e2697679dbd039c97f48c52",22266000,"0xaa534478ea18d2e9b66cc45c8a8eb5d133cd42ac65f1dd41341f63899da4ebbf"],
+    ["2026-08-02","2026-08-02 23:59:59","daily","0x8a24a256a67476e34e2697679dbd039c97f48c52",137,null,"0.027317068796909031",null,"0","0","0.343812322331521545",null,22317916,null]
+  ]
+}

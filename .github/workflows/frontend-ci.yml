@@ -29,6 +29,9 @@ jobs:
 
       - run: npm ci --ignore-scripts
 
+      # Needs no npm packages; runs before the audit so a failing audit can't hide it.
+      - run: npm run l3-history -- --check
+
       - run: npm audit --audit-level=moderate
       - run: npm audit signatures
 
@@ -40,7 +43,7 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_PUBLIC_RPC: https://rpc.example.invalid
-          NEXT_PUBLIC_CHAIN_ID: "26514"
+          NEXT_PUBLIC_CHAIN_ID: "8453"
           NEXT_PUBLIC_CONTRACT_STAKER: "0x0000000000000000000000000000000000000001"
           NEXT_PUBLIC_CONTRACT_TOKEN: "0x0000000000000000000000000000000000000002"
           NEXT_PUBLIC_SUBGRAPH: https://subgraph.example.invalid/graphql

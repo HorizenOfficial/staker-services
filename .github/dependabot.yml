@@ -5,6 +5,14 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # Hold eslint on 9.x: eslint-config-next@16.2.x bundles eslint-plugin-react,
+      # eslint-plugin-import and eslint-plugin-jsx-a11y, whose peer ranges stop at
+      # eslint 9. Under eslint 10, `npm run lint` crashes (eslint-plugin-react calls
+      # context.getFilename(), removed in eslint 10). Drop this once
+      # eslint-config-next supports eslint 10.
+      - dependency-name: eslint
+        versions: [">=10"]
 
   - package-ecosystem: github-actions
     directory: /

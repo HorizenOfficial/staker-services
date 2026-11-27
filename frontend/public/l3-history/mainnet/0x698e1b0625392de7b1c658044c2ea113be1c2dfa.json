@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "chain": "Horizen L3",
+    "net": "mainnet",
+    "staker": "0x6bf7cf29a8bce11aa62cf593d165c244fa4d3e31",
+    "deployBlock": 21317419,
+    "deployTime": "2026-07-22 10:05:02",
+    "E": 30504979,
+    "ETime": "2026-11-05 18:11:02",
+    "sourceGenerated": "2026-11-20T09:21:13Z",
+    "conventions": "amounts are exact decimal ZEN (18 decimals, trailing zeros dropped); times are UTC; a daily row is the state at the last block of that UTC day (at E on the last day); rewards_accrued_zen = unclaimed at the end of the day - unclaimed at the end of the previous day + claimed during the day; an empty cell / null means the column does not apply to the row type",
+    "windDown": "The stake and the unclaimed rewards at the chain's final block were paid out on Base by the wind-down distribution of 2026-11-20 (Base transaction 0x6a5373e35e8e328c667fd3ea6ac259cf0e41ba5c88fae52667ae37e1ec45219a), to the owner's own address unless it was held back or redirected. Those payments are Base transactions and are not rows of these files."
+  },
+  "owner": "0x698e1b0625392de7b1c658044c2ea113be1c2dfa",
+  "summary": {
+    "positions": 1,
+    "depositTxs": 1,
+    "withdrawTxs": 1,
+    "claimTxs": 1,
+    "depositedZen": "679.631782",
+    "withdrawnZen": "679.631782",
+    "rewardsEarnedZen": "2.383339045416097024",
+    "rewardsClaimedZen": "2.383339045416097024",
+    "stakedAtCloseZen": "0",
+    "unclaimedAtCloseZen": "0",
+    "firstDay": "2026-10-10",
+    "lastDay": "2026-10-29"
+  },
+  "deposits": {
+    "282": {
+      "createdBlock": 28256054,
+      "createdTime": "2026-10-10 17:28:57",
+      "depositedZen": "679.631782",
+      "withdrawnZen": "679.631782",
+      "rewardsAccruedZen": "2.383339045416097024",
+      "rewardsClaimedZen": "2.383339045416097024",
+      "stakedAtEZen": "0",
+      "unclaimedAtEZen": "0"
+    }
+  },
+  "columns": [
+    "date_utc",
+    "timestamp_utc",
+    "row_type",
+    "owner",
+    "deposit_id",
+    "staked_change_zen",
+    "rewards_accrued_zen",
+    "rewards_claimed_zen",
+    "staked_balance_zen",
+    "unclaimed_rewards_zen",
+    "rewards_cumulative_zen",
+    "paid_to",
+    "block",
+    "tx_hash"
+  ],
+  "rows": [
+    ["2026-10-10","2026-10-10 17:28:57","deposit","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,"679.631782",null,null,"679.631782",null,null,null,28256054,"0xfa998405ec37c623d04b042dafabac153db44bd2d5713aebb023e0941c2b2a02"],
+    ["2026-10-10","2026-10-10 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.040759304040423789",null,"679.631782","0.040759304040423789","0.040759304040423789",null,28279516,null],
+    ["2026-10-11","2026-10-11 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150279788982663767",null,"679.631782","0.191039093023087556","0.191039093023087556",null,28365916,null],
+    ["2026-10-12","2026-10-12 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.1503413879895585",null,"679.631782","0.341380481012646056","0.341380481012646056",null,28452316,null],
+    ["2026-10-13","2026-10-13 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.15069927539646736",null,"679.631782","0.492079756409113416","0.492079756409113416",null,28538716,null],
+    ["2026-10-14","2026-10-14 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150511945811529996",null,"679.631782","0.642591702220643412","0.642591702220643412",null,28625116,null],
+    ["2026-10-15","2026-10-15 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150828100753082509",null,"679.631782","0.793419802973725921","0.793419802973725921",null,28711516,null],
+    ["2026-10-16","2026-10-16 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150906229156425662",null,"679.631782","0.944326032130151583","0.944326032130151583",null,28797916,null],
+    ["2026-10-17","2026-10-17 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150695089508291071",null,"679.631782","1.095021121638442654","1.095021121638442654",null,28884316,null],
+    ["2026-10-18","2026-10-18 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150623181881710045",null,"679.631782","1.245644303520152699","1.245644303520152699",null,28970716,null],
+    ["2026-10-19","2026-10-19 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150511959951362478",null,"679.631782","1.396156263471515177","1.396156263471515177",null,29057116,null],
+    ["2026-10-20","2026-10-20 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.150544704940075059",null,"679.631782","1.546700968411590236","1.546700968411590236",null,29143516,null],
+    ["2026-10-21","2026-10-21 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.151240178155954615",null,"679.631782","1.697941146567544851","1.697941146567544851",null,29229916,null],
+    ["2026-10-22","2026-10-22 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.187181702316357866",null,"679.631782","1.885122848883902717","1.885122848883902717",null,29316316,null],
+    ["2026-10-23","2026-10-23 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.188741471448418789",null,"679.631782","2.073864320332321506","2.073864320332321506",null,29402716,null],
+    ["2026-10-24","2026-10-24 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.208398657535108982",null,"679.631782","2.282262977867430488","2.282262977867430488",null,29489116,null],
+    ["2026-10-25","2026-10-25 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0.101076067548666536",null,"679.631782","2.383339045416097024","2.383339045416097024",null,29575516,null],
+    ["2026-10-26","2026-10-26 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0",null,"679.631782","2.383339045416097024","2.383339045416097024",null,29661916,null],
+    ["2026-10-27","2026-10-27 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0",null,"679.631782","2.383339045416097024","2.383339045416097024",null,29748316,null],
+    ["2026-10-28","2026-10-28 23:59:59","daily","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,"0",null,"679.631782","2.383339045416097024","2.383339045416097024",null,29834716,null],
+    ["2026-10-29","2026-10-29 15:47:27","claim","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,null,null,"2.383339045416097024",null,null,null,"0x698e1b0625392de7b1c658044c2ea113be1c2dfa",29891564,"0x38d7e0f9f31f7b5f30bb00265e6b9bf130907b69ced79bf1872d8c934d407c4b"],
+    ["2026-10-29","2026-10-29 15:50:00","withdraw","0x698e1b0625392de7b1c658044c2ea113be1c2dfa",282,"-679.631782",null,null,"0",null,null,null,29891717,"0xd71efa34404535e540eebd8ba951d9b1bbbefcec104952f39dc834ac6f2564fc"]
+  ]
+}
