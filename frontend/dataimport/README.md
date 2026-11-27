@@ -6,8 +6,10 @@ address**. The History page uses these files to show users their L3 activity and
 
 ## Source data
 
-Copied unchanged from the (private) wind-down repo
-[HorizenOfficial/horizen-winddown](https://github.com/HorizenOfficial/horizen-winddown), commit `3089fa0`:
+Copied from the (private) wind-down repo
+[HorizenOfficial/horizen-winddown](https://github.com/HorizenOfficial/horizen-winddown), commit `3089fa0`,
+unchanged except that the internal `meta.rpcHost` field was removed from both JSON files (`generate.ts` doesn't
+use it):
 
 | Here | Upstream |
 |---|---|
@@ -37,8 +39,9 @@ need refreshing. Don't edit it by hand. If upstream ever reissues it, copy the n
   `withdrawnZen`, `rewardsEarnedZen`, `rewardsClaimedZen`, `stakedAtCloseZen`, `unclaimedAtCloseZen`,
   `firstDay`, `lastDay`.
 - Amounts stay exact decimal strings everywhere. They are never converted to JS numbers.
-- Whole-dataset totals and the source's internal `rpcHost` are **not** published. Each file only contains its
-  owner's data.
+- Each output file only contains its owner's data: whole-dataset totals are not copied into `public/`. They do
+  stay in the committed source (`meta.totals`, and in `source-readme.md`), because the checks below use them.
+  Like everything else in the source, they come from public L3 chain data.
 - The output is generated once and **committed**. The Cloudflare build doesn't run the script.
 
 Size: mainnet has 275 owners (550 files plus README, about 11 MB). Testnet has 8 owners (16 files plus README,

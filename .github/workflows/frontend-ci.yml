@@ -29,6 +29,9 @@ jobs:
 
       - run: npm ci --ignore-scripts
 
+      # Needs no npm packages; runs before the audit so a failing audit can't hide it.
+      - run: npm run l3-history -- --check
+
       - run: npm audit --audit-level=moderate
       - run: npm audit signatures
 
